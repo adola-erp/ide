@@ -430,7 +430,12 @@ async function loadLangauges() {
                 options.sort((a, b) => a.text.localeCompare(b.text));
                 $selectLanguage.append(options);
                 $("#select-language-mobile").append($(options).clone());
-                $("#select-language-mobile").parent().dropdown();
+                $("#select-language-mobile").parent().dropdown({
+                    fullTextSearch: true,
+                    message: {
+                        noResults: "No language found."
+                    }
+                });
                 resolve();
             });
         });
@@ -535,8 +540,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     $("#select-language-mobile").change(function (event, data) {
         const val = $(this).val();
-        if ($selectLanguage.val() !== val) {
+        if (val && $selectLanguage.val() !== val) {
             $selectLanguage.dropdown("set selected", val);
+            $("#judge0-mobile-menu-modal").modal("hide");
         }
     });
 
