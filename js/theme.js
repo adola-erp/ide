@@ -8,6 +8,11 @@ const theme = {
         const isLight = resolvedTheme === "light";
 
         document.body.style.background = isLight ? "#f3f4f6" : "#111827";
+        if (isLight) {
+            document.body.classList.remove("inverted");
+        } else {
+            document.body.classList.add("inverted");
+        }
 
         document.getElementById("judge0-golden-layout-dark-theme-stylesheet").disabled = isLight;
         document.getElementById("judge0-golden-layout-light-theme-stylesheet").disabled = !isLight;

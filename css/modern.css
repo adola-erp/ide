@@ -26,6 +26,15 @@ body.inverted #judge0-site-navigation {
     border-bottom: 1px solid #374151 !important;
 }
 
+body.inverted #judge0-site-navigation .item,
+body.inverted #judge0-site-navigation .item i.icon {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+#judge0-mobile-menu-btn i.icon {
+    color: var(--accent-color) !important;
+}
+
 #judge0-site-navigation .item {
     padding: 0.5rem 0.75rem !important;
     margin: 0 0.25rem !important;
