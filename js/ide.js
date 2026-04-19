@@ -53,54 +53,48 @@ var layoutConfig = {
         reorderEnabled: true
     },
     content: [{
-        type: configuration.get("appOptions.mainLayout"),
+        type: "row",
         content: [{
             type: "component",
-            width: 66,
-            componentName: "source",
-            id: "source",
-            title: "Source Code",
-            isClosable: false,
-            componentState: {
-                readOnly: false
-            }
+            width: 40,
+            componentName: "description",
+            id: "description",
+            title: "Description",
+            isClosable: false
         }, {
-            type: configuration.get("appOptions.assistantLayout"),
-            title: "AI Assistant and I/O",
-            content: [configuration.get("appOptions.showAIAssistant") ? {
+            type: "column",
+            content: [{
                 type: "component",
-                height: 66,
-                componentName: "ai",
-                id: "ai",
-                title: "AI Assistant",
+                height: 70,
+                componentName: "source",
+                id: "source",
+                title: "Code",
                 isClosable: false,
                 componentState: {
                     readOnly: false
                 }
-            } : null, {
-                type: configuration.get("appOptions.ioLayout"),
-                title: "I/O",
-                content: [
-                    configuration.get("appOptions.showInput") ? {
-                        type: "component",
-                        componentName: "stdin",
-                        id: "stdin",
-                        title: "Input",
-                        isClosable: false,
-                        componentState: {
-                            readOnly: false
-                        }
-                    } : null, configuration.get("appOptions.showOutput") ? {
-                        type: "component",
-                        componentName: "stdout",
-                        id: "stdout",
-                        title: "Output",
-                        isClosable: false,
-                        componentState: {
-                            readOnly: true
-                        }
-                    } : null].filter(Boolean)
-            }].filter(Boolean)
+            }, {
+                type: "stack",
+                content: [{
+                    type: "component",
+                    componentName: "stdin",
+                    id: "stdin",
+                    title: "Testcase",
+                    isClosable: false,
+                    componentState: {
+                        readOnly: false
+                    }
+                }, {
+                    type: "component",
+                    componentName: "stdout",
+                    id: "stdout",
+                    title: "Test Result",
+                    isClosable: false,
+                    componentState: {
+                        readOnly: true
+                    }
+                }]
+            }]
         }]
     }]
 };
@@ -503,6 +497,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     $runBtn = $("#run-btn");
     $runBtn.click(run);
 
+    $("#submit-btn").click(function() {
+        showError("Info", "Submit functionality is currently being implemented. For now, please use the Run button to test your code.");
+    });
+
     $("#open-file-input").change(function (e) {
         const selectedFile = e.target.files[0];
         if (selectedFile) {
@@ -673,6 +671,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         layout.registerComponent("ai", function (container, state) {
             container.getElement()[0].appendChild(document.getElementById("judge0-chat-container"));
+        });
+
+        layout.registerComponent("description", function (container, state) {
+            container.getElement()[0].appendChild(document.getElementById("judge0-problem-description"));
+            document.getElementById("judge0-problem-description").style.display = "block";
         });
 
         layout.on("initialised", function () {

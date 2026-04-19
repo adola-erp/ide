@@ -96,6 +96,20 @@
         <a id="judge0-header" href="https://judge0.com" target="_blank" class="header item judge0-showLogo">
             <img id="judge0-logo" src="./images/icon_var2_rounded_512.png">
         </a>
+        <div class="item">
+            <i class="list icon"></i>
+            <span class="text">Problem List</span>
+        </div>
+        <div class="item">
+            <i class="chevron left icon"></i>
+        </div>
+        <div class="item">
+            <i class="chevron right icon"></i>
+        </div>
+        <div class="item">
+            <i class="random icon"></i>
+        </div>
+
         <div class="ui simple dropdown item judge0-showFileMenu">
             <span class="text">File</span>
             <i class="dropdown icon"></i>
@@ -111,56 +125,77 @@
                 </div>
             </div>
         </div>
-        <div class="ui simple dropdown item judge0-showHelpMenu">
-            <span class="text">Help</span>
-            <i class="dropdown icon"></i>
-            <div class="menu judge0-file-menu">
-                <a href="https://github.com/judge0/ide" class="link text item" target="_blank"><i class="external square alternate icon"></i>GitHub Repository</a>
-                <a href="/embed" class="link text item" target="_blank"><i class="external square alternate icon"></i>Embed Guide</a>
-                <a href="https://platform.sulu.sh/apis/judge0" class="link text item" target="_blank"><i class="external square alternate icon"></i>HTTP API Documentation</a>
-                <a href="PRIVACY.md" class="link text item" target="_blank"><i class="external square alternate icon"></i>Privacy Policy</a>
-                <a href="TERMS.md" class="link text item" target="_blank"><i class="external square alternate icon"></i>Terms of Service</a>
-            </div>
-        </div>
+
         <div class="item judge0-showSelectLanguage">
             <select id="select-language" class="ui search selection dropdown"></select>
         </div>
-        <div class="item judge0-showCompilerOptions">
-            <div class="ui left icon transparent input">
-                <i class="flag icon"></i>
-                <input id="compiler-options" type="text" placeholder="Compiler options"></input>
+
+        <div class="item" style="flex-grow: 1; justify-content: center; display: flex;">
+            <div class="ui buttons">
+                <button id="run-btn" class="ui button" data-content="+↵">
+                    <i class="play icon"></i>
+                </button>
+                <button id="submit-btn" class="ui positive button">
+                    <i class="cloud upload icon"></i>
+                    Submit
+                </button>
             </div>
         </div>
-        <div class="item judge0-showCommandLineArguments">
-            <div class="ui left icon transparent input">
-                <i class="terminal icon"></i>
-                <input id="command-line-arguments" type="text" placeholder="Command line arguments"></input>
-            </div>
-        </div>
-        <div class="item judge0-showRunButton">
-            <button id="run-btn" class="ui primary labeled icon button" data-content="+↵">
-                <i class="play icon"></i>
-                Run Code
-            </button>
-        </div>
+
         <div class="right menu">
             <div id="judge0-theme-toggle-btn" class="icon link item judge0-showThemeButton" data-content="">
                 <i id="judge0-theme-toggle-btn-icon" class="sun icon"></i>
             </div>
-            <div class="item judge0-showPuterSignInOutButton">
-                <button id="judge0-sign-in-btn" class="ui basic button">
-                    <i class="sign-in icon"></i>
-                    Sign in with Puter
-                </button>
-                <button id="judge0-sign-out-btn" class="ui basic button" data-content="Sign out">
-                    <i class="sign-out icon"></i>
-                    <span id="judge0-puter-username">Sign out</span>
-                </button>
+            <div class="item">
+                <i class="th icon"></i>
+            </div>
+            <div class="item">
+                <i class="setting icon"></i>
+            </div>
+            <div class="item">
+                <i class="fire icon"></i>
+                <span>0</span>
+            </div>
+            <div class="item">
+                <i class="stopwatch icon"></i>
+            </div>
+            <div class="item">
+                <i class="user plus icon"></i>
+            </div>
+            <div class="item">
+                <i class="user circle icon"></i>
+            </div>
+            <div class="item">
+                <button class="ui orange basic button">Premium</button>
             </div>
         </div>
     </div>
 
     <div id="judge0-site-content"></div>
+
+    <div id="judge0-problem-description" style="display: none;">
+        <div class="ui basic segment description-container">
+            <h1 class="ui header">29. Divide Two Integers</h1>
+            <div class="ui labels">
+                <div class="ui yellow label">Medium</div>
+                <div class="ui basic label"><i class="tag icon"></i> Topics</div>
+                <div class="ui basic label"><i class="lock icon"></i> Companies</div>
+            </div>
+            <div class="problem-content" style="margin-top: 20px;">
+                <p>Given two integers <code>dividend</code> and <code>divisor</code>, divide two integers <strong>without</strong> using multiplication, division, and mod operator.</p>
+                <p>The integer division should truncate toward zero, which means losing its fractional part. For example, <code>8.345</code> would be truncated to <code>8</code>, and <code>-2.7335</code> would be truncated to <code>-2</code>.</p>
+                <p>Return <em>the quotient after dividing</em> <code>dividend</code> by <code>divisor</code>.</p>
+                <p><strong>Note:</strong> Assume we are dealing with an environment that could only store integers within the <strong>32-bit</strong> signed integer range: [−2<sup>31</sup>, 2<sup>31</sup> − 1]. For this problem, if the quotient is <strong>strictly greater than</strong> 2<sup>31</sup> − 1, then return 2<sup>31</sup> − 1, and if the quotient is <strong>strictly less than</strong> −2<sup>31</sup>, then return −2<sup>31</sup>.</p>
+
+                <h3>Example 1:</h3>
+                <div class="ui segment">
+                    <p><strong>Input:</strong> dividend = 10, divisor = 3</p>
+                    <p><strong>Output:</strong> 3</p>
+                    <p><strong>Explanation:</strong> 10/3 = 3.33333.. which is truncated to 3.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="judge0-site-modal" class="ui modal">
         <div class="header">
