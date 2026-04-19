@@ -152,7 +152,7 @@ function loadProblem(id) {
 
     currentProblemId = id;
 
-    const container = document.getElementById("judge0-problem-description");
+    const container = document.getElementById("procode-problem-description");
     if (!container) return;
 
     const difficultyColor = problem.difficulty === "Easy" ? "green" : (problem.difficulty === "Medium" ? "yellow" : "red");
@@ -219,7 +219,7 @@ function renderProblems(filter = "") {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const drawer = document.getElementById("judge0-problem-list-drawer");
+    const drawer = document.getElementById("procode-problem-list-drawer");
     const openBtn = document.getElementById("problem-list-btn");
     const closeBtn = document.getElementById("close-drawer-btn");
     const searchInput = document.getElementById("problem-search");

@@ -115,8 +115,8 @@ function decode(bytes) {
 }
 
 function showError(title, content) {
-    $("#judge0-site-modal #title").html(title);
-    $("#judge0-site-modal .content").html(content);
+    $("#procode-site-modal #title").html(title);
+    $("#procode-site-modal .content").html(content);
 
     let reportTitle = encodeURIComponent(`Error on ${window.location.href}`);
     let reportBody = encodeURIComponent(
@@ -127,7 +127,7 @@ function showError(title, content) {
     );
 
     $("#report-problem-btn").attr("href", `https://github.com/judge0/ide/issues/new?title=${reportTitle}&body=${reportBody}`);
-    $("#judge0-site-modal").modal("show");
+    $("#procode-site-modal").modal("show");
 }
 
 function showHttpError(jqXHR) {
@@ -175,7 +175,7 @@ function handleResult(data) {
 }
 
 function renderTestResults(data, actualOutput) {
-    const container = document.getElementById("judge0-test-result-container");
+    const container = document.getElementById("procode-test-result-container");
     const statusEl = document.getElementById("test-result-status");
     const runtimeEl = document.getElementById("test-result-runtime");
     const tabsContainer = document.getElementById("test-case-tabs");
@@ -538,7 +538,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     refreshSiteContentHeight();
 
-    console.log("Hey, Judge0 IDE is open-sourced: https://github.com/judge0/ide. Have fun!");
+    console.log("Hey, ProCode IDE is open-sourced. Have fun!");
 
     $selectLanguage = $("#select-language");
     $selectLanguage.change(function (event, data) {
@@ -581,7 +581,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     });
 
-    $statusLine = $("#judge0-status-line");
+    $statusLine = $("#procode-status-line");
 
     $(document).on("keydown", "body", function (e) {
         if (e.metaKey || e.ctrlKey) {
@@ -623,7 +623,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
     require(["vs/editor/editor.main"], function (ignorable) {
-        layout = new GoldenLayout(layoutConfig, $("#judge0-site-content"));
+        layout = new GoldenLayout(layoutConfig, $("#procode-site-content"));
 
         layout.registerComponent("source", function (container, state) {
             sourceEditor = monaco.editor.create(container.getElement()[0], {
@@ -640,7 +640,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             monaco.languages.registerInlineCompletionsProvider('*', {
                 provideInlineCompletions: async (model, position) => {
-                    if (!puter.auth.isSignedIn() || !document.getElementById("judge0-inline-suggestions").checked || !configuration.get("appOptions.showAIAssistant")) {
+                    if (!puter.auth.isSignedIn() || !document.getElementById("procode-inline-suggestions").checked || !configuration.get("appOptions.showAIAssistant")) {
                         return;
                     }
 
@@ -679,7 +679,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                     ### Completion:`.trim()
                     }], {
-                        model: document.getElementById("judge0-chat-model-select").value,
+                        model: document.getElementById("procode-chat-model-select").value,
                     });
 
                     let aiResponseValue = aiResponse?.toString().trim() || "";
@@ -722,7 +722,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         layout.registerComponent("stdout", function (container, state) {
-            const el = document.getElementById("judge0-test-result-container");
+            const el = document.getElementById("procode-test-result-container");
             if (el) {
                 container.getElement()[0].appendChild(el);
                 el.style.display = "flex";
@@ -741,11 +741,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         layout.registerComponent("ai", function (container, state) {
-            container.getElement()[0].appendChild(document.getElementById("judge0-chat-container"));
+            container.getElement()[0].appendChild(document.getElementById("procode-chat-container"));
         });
 
         layout.registerComponent("description", function (container, state) {
-            const el = document.getElementById("judge0-problem-description");
+            const el = document.getElementById("procode-problem-description");
             if (el) {
                 container.getElement()[0].appendChild(el);
                 el.style.display = "block";
@@ -781,8 +781,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
-    document.getElementById("judge0-open-file-btn").addEventListener("click", openAction);
-    document.getElementById("judge0-save-btn").addEventListener("click", saveAction);
+    document.getElementById("procode-open-file-btn").addEventListener("click", openAction);
+    document.getElementById("procode-save-btn").addEventListener("click", saveAction);
 
     window.onmessage = function (e) {
         if (!e.data) {
