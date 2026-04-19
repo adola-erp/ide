@@ -41,38 +41,39 @@ body.inverted #judge0-site-navigation {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
 }
 
-#judge0-logo {
-    height: 32px !important;
-    width: auto !important;
-}
 
-/* Run Button Modernization */
+/* Run Button Modernization - New Design */
 #run-btn {
-    border-radius: var(--border-radius) !important;
-    background-color: var(--accent-color) !important;
+    border-radius: 50px !important; /* Pill shape */
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
     color: white !important;
     font-weight: 600 !important;
-    transition: all 0.2s ease !important;
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
     border: none !important;
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
-    padding: 0.75rem 1.25rem !important;
+    gap: 10px !important;
+    padding: 0.6rem 1.5rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    font-size: 0.85rem !important;
 }
 
 #run-btn:hover {
-    background-color: #2563eb !important;
-    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3) !important;
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3) !important;
+    transform: translateY(-2px);
 }
 
 #run-btn i.icon {
     margin: 0 !important;
+    font-size: 0.9rem !important;
 }
 
 #run-btn:active {
     transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2) !important;
 }
 
 /* Global Rounded Corners & Inputs */
@@ -230,4 +231,244 @@ body.inverted .judge0-ai-message {
 
 body.inverted #judge0-status-line {
     background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Mobile adjustments */
+#judge0-mobile-footer, #judge0-mobile-menu-btn {
+    display: none;
+}
+
+#judge0-clear-btn {
+    color: #ef4444 !important; /* Red color for clear action */
+}
+
+#judge0-clear-btn:hover {
+    color: #dc2626 !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+}
+
+@media (max-width: 768px) {
+    #judge0-mobile-menu-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem !important;
+    }
+
+    #judge0-mobile-footer {
+        display: flex;
+        z-index: 1000;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.8) !important;
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+
+    body.inverted #judge0-mobile-footer {
+        background: rgba(17, 24, 39, 0.8) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    #judge0-site-content {
+        height: calc(100vh - 50px - 60px) !important; /* nav height - footer height */
+    }
+
+    /* Hide desktop-only elements on mobile */
+    .judge0-showCommandLineArguments,
+    .judge0-showCompilerOptions,
+    .judge0-showSelectLanguage,
+    .judge0-showFileMenu,
+    .judge0-showThemeButton,
+    .judge0-showPuterSignInOutButton {
+        display: none !important;
+    }
+
+    .lm_header {
+        display: none !important;
+    }
+}
+
+/* Mobile Menu Modal Improvements */
+#judge0-mobile-menu-modal .content {
+    padding: 0 !important;
+}
+
+#judge0-mobile-menu-modal .ui.vertical.menu {
+    border: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+#judge0-mobile-menu-modal .ui.vertical.menu > .item {
+    border-radius: 0 !important;
+    padding: 1.25rem 1.5rem !important;
+}
+
+#judge0-mobile-menu-modal .ui.vertical.menu > .item:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+body.inverted #judge0-mobile-menu-modal .ui.vertical.menu > .item:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+#judge0-mobile-menu-modal .header {
+    margin-bottom: 0.75rem !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: var(--accent-color) !important;
+}
+
+/* Footer improvements */
+#judge0-mobile-footer .item {
+    transition: background 0.2s ease, color 0.2s ease !important;
+}
+
+#judge0-mobile-footer .item.active {
+    color: var(--accent-color) !important;
+    font-weight: 600 !important;
+    background: rgba(59, 130, 246, 0.05) !important;
+}
+
+#judge0-mobile-footer .item i.icon {
+    margin-bottom: 4px !important;
+}
+
+/* Prominent Run Button in Footer - No Text Design */
+#judge0-mobile-run-btn {
+    position: relative;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#judge0-mobile-run-btn .run-icon-container {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(-5px); /* Slightly raised */
+    border: 3px solid white; /* Ring effect */
+}
+
+body.inverted #judge0-mobile-run-btn .run-icon-container {
+    border-color: #111827;
+}
+
+#judge0-mobile-run-btn:active .run-icon-container {
+    transform: translateY(-2px) scale(0.9);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+#judge0-mobile-run-btn .play.icon {
+    margin: 0 !important;
+    font-size: 1.2rem !important;
+    margin-left: 2px !important; /* Visual centering for play icon */
+}
+
+#judge0-mobile-footer .item {
+    min-width: 0 !important;
+    padding: 0.5rem 0.1rem !important;
+}
+
+#judge0-mobile-footer span {
+    font-size: 9px !important;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+/* Glassmorphism for Footer */
+@media (max-width: 768px) {
+    #judge0-mobile-footer {
+        background: rgba(255, 255, 255, 0.8) !important;
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+        height: 65px !important;
+    }
+
+    body.inverted #judge0-mobile-footer {
+        background: rgba(17, 24, 39, 0.8) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+
+    #judge0-site-content {
+        height: calc(100vh - 54px - 65px) !important; /* nav height - footer height */
+    }
+}
+
+/* Fix for dropdowns and ensuring they are scrollable */
+.ui.dropdown .menu {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    overscroll-behavior: contain !important;
+}
+
+#judge0-mobile-menu-modal .ui.dropdown .menu {
+    max-height: 40vh !important;
+    z-index: 10001 !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    overscroll-behavior: contain !important;
+}
+
+#judge0-mobile-menu-modal {
+    z-index: 10000 !important;
+}
+
+/* Ensure modal content is scrollable if dropdown is long */
+#judge0-mobile-menu-modal {
+    max-height: 80vh !important;
+    overflow-y: visible !important;
+}
+
+#judge0-mobile-menu-modal .content {
+    overflow-y: auto !important;
+    max-height: 60vh !important;
+}
+
+/* Specific fix for language dropdown items */
+#select-language-mobile ~ .menu .item,
+#select-language ~ .menu .item {
+    padding: 1rem 1.25rem !important;
+    font-size: 1rem !important;
+}
+
+/* Custom Large Box-Type Scrollbar for Dropdowns on Mobile */
+@media (max-width: 768px) {
+    .ui.dropdown .menu::-webkit-scrollbar {
+        width: 12px !important;
+        background-color: rgba(0, 0, 0, 0.03) !important;
+    }
+
+    .ui.dropdown .menu::-webkit-scrollbar-thumb {
+        background-color: var(--accent-color) !important;
+        border-radius: 2px !important; /* Blockier */
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        min-height: 50px !important; /* Even larger touch target */
+    }
+
+    body.inverted .ui.dropdown .menu::-webkit-scrollbar-thumb {
+        background-color: #4b5563 !important;
+    }
+
+    .ui.dropdown .menu::-webkit-scrollbar-track {
+        background-color: transparent !important;
+    }
+
+    /* Ensure content doesn't get covered by the larger scrollbar */
+    .ui.dropdown .menu {
+        padding-right: 4px !important;
+    }
 }

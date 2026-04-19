@@ -47,12 +47,42 @@ var timeStart;
 var sqliteAdditionalFiles;
 var languages = {};
 
+var isMobile = window.matchMedia("(max-width: 768px)").matches;
+
 var layoutConfig = {
     settings: {
         showPopoutIcon: false,
-        reorderEnabled: true
+        reorderEnabled: !isMobile,
+        stackedHeaderElementId: isMobile ? "judge0-mobile-footer" : null
     },
-    content: [{
+    content: isMobile ? [{
+        type: "stack",
+        content: [{
+            type: "component",
+            componentName: "source",
+            id: "source",
+            title: "Source",
+            isClosable: false
+        }, {
+            type: "component",
+            componentName: "stdin",
+            id: "stdin",
+            title: "Input",
+            isClosable: false
+        }, {
+            type: "component",
+            componentName: "stdout",
+            id: "stdout",
+            title: "Output",
+            isClosable: false
+        }, {
+            type: "component",
+            componentName: "ai",
+            id: "ai",
+            title: "AI Assistant",
+            isClosable: false
+        }]
+    }] : [{
         type: configuration.get("appOptions.mainLayout"),
         content: [{
             type: "component",
@@ -200,8 +230,12 @@ function run() {
     stdoutEditor.setValue("");
     $statusLine.html("");
 
-    let x = layout.root.getItemsById("stdout")[0];
-    x.parent.header.parent.setActiveContentItem(x);
+    if (isMobile) {
+        $("#judge0-mobile-stdout-btn").click();
+    } else {
+        let x = layout.root.getItemsById("stdout")[0];
+        x.parent.header.parent.setActiveContentItem(x);
+    }
 
     let sourceValue = encode(sourceEditor.getValue());
     let stdinValue = encode(stdinEditor.getValue());
@@ -364,7 +398,7 @@ async function loadLangauges() {
                     let language = data[i];
                     let option = new Option(language.name, language.id);
                     option.setAttribute("flavor", CE);
-                    option.setAttribute("langauge_mode", getEditorLanguageMode(language.name));
+                    option.setAttribute("language_mode", getEditorLanguageMode(language.name));
 
                     if (language.id !== 89) {
                         options.push(option);
@@ -384,7 +418,7 @@ async function loadLangauges() {
                         let language = data[i];
                         let option = new Option(language.name, language.id);
                         option.setAttribute("flavor", EXTRA_CE);
-                        option.setAttribute("langauge_mode", getEditorLanguageMode(language.name));
+                        option.setAttribute("language_mode", getEditorLanguageMode(language.name));
 
                         if (options.findIndex((t) => (t.text === option.text)) === -1 && language.id !== 89) {
                             options.push(option);
@@ -395,6 +429,13 @@ async function loadLangauges() {
             }).always(function () {
                 options.sort((a, b) => a.text.localeCompare(b.text));
                 $selectLanguage.append(options);
+                $("#select-language-mobile").append($(options).clone());
+                $("#select-language-mobile").dropdown({
+                    fullTextSearch: true,
+                    message: {
+                        noResults: "No language found."
+                    }
+                });
                 resolve();
             });
         });
@@ -402,7 +443,7 @@ async function loadLangauges() {
 };
 
 async function loadSelectedLanguage(skipSetDefaultSourceCodeName = false) {
-    monaco.editor.setModelLanguage(sourceEditor.getModel(), $selectLanguage.find(":selected").attr("langauge_mode"));
+    monaco.editor.setModelLanguage(sourceEditor.getModel(), $selectLanguage.find(":selected").attr("language_mode"));
 
     if (!skipSetDefaultSourceCodeName) {
         setSourceCodeName((await getSelectedLanguage()).source_file);
@@ -467,9 +508,10 @@ function clear() {
 
 function refreshSiteContentHeight() {
     const navigationHeight = document.getElementById("judge0-site-navigation").offsetHeight;
+    const footerHeight = (isMobile ? document.getElementById("judge0-mobile-footer").offsetHeight : 0);
 
     const siteContent = document.getElementById("judge0-site-content");
-    siteContent.style.height = `${window.innerHeight}px`;
+    siteContent.style.height = `${window.innerHeight - footerHeight}px`;
     siteContent.style.paddingTop = `${navigationHeight}px`;
 }
 
@@ -487,18 +529,40 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     refreshSiteContentHeight();
 
-    console.log("Hey, Judge0 IDE is open-sourced: https://github.com/judge0/ide. Have fun!");
+
 
     $selectLanguage = $("#select-language");
     $selectLanguage.change(function (event, data) {
         let skipSetDefaultSourceCodeName = (data && data.skipSetDefaultSourceCodeName) || !!gPuterFile;
         loadSelectedLanguage(skipSetDefaultSourceCodeName);
+        $("#select-language-mobile").dropdown("set selected", $selectLanguage.val());
+    });
+
+    $("#select-language-mobile").change(function (event, data) {
+        const val = $(this).val();
+        if (val && $selectLanguage.val() !== val) {
+            $selectLanguage.dropdown("set selected", val);
+            $("#judge0-mobile-menu-modal").modal("hide");
+        }
     });
 
     await loadLangauges();
 
     $compilerOptions = $("#compiler-options");
+    $("#compiler-options-mobile").on("input", function() {
+        $compilerOptions.val($(this).val());
+    });
+    $compilerOptions.on("input", function() {
+        $("#compiler-options-mobile").val($(this).val());
+    });
+
     $commandLineArguments = $("#command-line-arguments");
+    $("#command-line-arguments-mobile").on("input", function() {
+        $commandLineArguments.val($(this).val());
+    });
+    $commandLineArguments.on("input", function() {
+        $("#command-line-arguments-mobile").val($(this).val());
+    });
 
     $runBtn = $("#run-btn");
     $runBtn.click(run);
@@ -682,6 +746,51 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         layout.init();
+
+        const switchToView = (componentId) => {
+            if (!layout || !layout.isInitialised) {
+                return;
+            }
+            const items = layout.root.getItemsById(componentId);
+            if (items.length > 0) {
+                const item = items[0];
+                let p = item.parent;
+                while (p && p.type !== "stack" && p.parent) {
+                    p = p.parent;
+                }
+                if (p && p.type === "stack") {
+                    p.setActiveContentItem(item);
+                }
+            }
+        };
+
+        $("#judge0-mobile-code-btn").on("click", function() {
+            $("#judge0-mobile-footer .item").removeClass("active");
+            $(this).addClass("active");
+            switchToView("source");
+        });
+
+        $("#judge0-mobile-stdin-btn").on("click", function() {
+            $("#judge0-mobile-footer .item").removeClass("active");
+            $(this).addClass("active");
+            switchToView("stdin");
+        });
+
+        $("#judge0-mobile-run-btn").on("click", function() {
+            run();
+        });
+
+        $("#judge0-mobile-stdout-btn").on("click", function() {
+            $("#judge0-mobile-footer .item").removeClass("active");
+            $(this).addClass("active");
+            switchToView("stdout");
+        });
+
+        $("#judge0-mobile-ai-btn").on("click", function() {
+            $("#judge0-mobile-footer .item").removeClass("active");
+            $(this).addClass("active");
+            switchToView("ai");
+        });
     });
 
     let superKey = "⌘";
@@ -706,6 +815,43 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     document.getElementById("judge0-open-file-btn").addEventListener("click", openAction);
     document.getElementById("judge0-save-btn").addEventListener("click", saveAction);
+
+    $("#judge0-clear-btn").on("click", function() {
+        if (confirm("Are you sure you want to clear your code?")) {
+            clear();
+        }
+    });
+
+    $("#judge0-mobile-menu-btn").on("click", function() {
+        $("#judge0-mobile-menu-modal").modal({
+            centered: false,
+            onVisible: function() {
+                $("#select-language-mobile").dropdown("set selected", $selectLanguage.val());
+            }
+        }).modal("show");
+    });
+
+    $("#judge0-mobile-open-btn").on("click", function() {
+        $("#judge0-mobile-menu-modal").modal("hide");
+        openAction();
+    });
+
+    $("#judge0-mobile-save-btn").on("click", function() {
+        $("#judge0-mobile-menu-modal").modal("hide");
+        saveAction();
+    });
+
+    $("#judge0-mobile-theme-toggle-btn").on("click", function() {
+        $("#judge0-theme-toggle-btn").click();
+    });
+
+    $("#judge0-mobile-sign-in-btn").on("click", function() {
+        $("#judge0-sign-in-btn").click();
+    });
+
+    $("#judge0-mobile-sign-out-btn").on("click", function() {
+        $("#judge0-sign-out-btn").click();
+    });
 
     window.onmessage = function (e) {
         if (!e.data) {
