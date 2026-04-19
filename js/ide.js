@@ -47,7 +47,50 @@ var timeStart;
 var sqliteAdditionalFiles;
 var languages = {};
 
-var layoutConfig = {
+var isMobile = window.innerWidth <= 768;
+
+var layoutConfig = isMobile ? {
+    settings: {
+        showPopoutIcon: false,
+        reorderEnabled: false,
+        showMaximiseIcon: false,
+        headerHeight: 0 // Hide header on mobile as we use footer
+    },
+    content: [{
+        type: "stack",
+        content: [{
+            type: "component",
+            componentName: "description",
+            id: "description",
+            title: "Description",
+            isClosable: false
+        }, {
+            type: "component",
+            componentName: "source",
+            id: "source",
+            title: "Code",
+            isClosable: false
+        }, {
+            type: "component",
+            componentName: "stdin",
+            id: "stdin",
+            title: "Testcase",
+            isClosable: false
+        }, {
+            type: "component",
+            componentName: "stdout",
+            id: "stdout",
+            title: "Test Result",
+            isClosable: false
+        }, {
+            type: "component",
+            componentName: "ai",
+            id: "ai",
+            title: "AI Assistant",
+            isClosable: false
+        }]
+    }]
+} : {
     settings: {
         showPopoutIcon: false,
         reorderEnabled: true
@@ -56,13 +99,14 @@ var layoutConfig = {
         type: "row",
         content: [{
             type: "component",
-            width: 40,
+            width: 30,
             componentName: "description",
             id: "description",
             title: "Description",
             isClosable: false
         }, {
             type: "column",
+            width: 45,
             content: [{
                 type: "component",
                 height: 70,
@@ -95,6 +139,13 @@ var layoutConfig = {
                     }
                 }]
             }]
+        }, {
+            type: "component",
+            width: 25,
+            componentName: "ai",
+            id: "ai",
+            title: "AI Assistant",
+            isClosable: false
         }]
     }]
 };
@@ -253,8 +304,11 @@ function run() {
     stdoutEditor.setValue("");
     $statusLine.html("");
 
+    // Automatically switch to Test Result tab
     let x = layout.root.getItemsById("stdout")[0];
-    x.parent.header.parent.setActiveContentItem(x);
+    if (x) {
+        x.parent.header.parent.setActiveContentItem(x);
+    }
 
     let sourceValue = encode(sourceEditor.getValue());
     let stdinValue = encode(stdinEditor.getValue());
@@ -774,7 +828,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
 
         layout.registerComponent("ai", function (container, state) {
-            container.getElement()[0].appendChild(document.getElementById("procode-chat-container"));
+            const el = document.getElementById("procode-chat-container");
+            if (el) {
+                container.getElement()[0].appendChild(el);
+                el.style.display = "flex";
+            }
         });
 
         layout.registerComponent("description", function (container, state) {

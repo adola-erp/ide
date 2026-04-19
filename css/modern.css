@@ -427,6 +427,10 @@ body {
     display: none !important;
 }
 
+.procode-hidden {
+    display: none !important;
+}
+
 .procode-showCopyright {
     background: var(--darker-bg) !important;
     color: #666 !important;
@@ -811,11 +815,12 @@ body {
         width: auto !important;
         min-width: 0 !important;
         margin-top: 15px !important;
-        border-radius: 16px !important;
-        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        background-color: #000000 !important; /* Pure black card */
         border: 1px solid #333 !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.8) !important;
-        padding: 8px !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.9) !important;
+        padding: 12px !important;
+        z-index: 10005 !important;
     }
 
     .mobile-only-item.header {
@@ -837,14 +842,22 @@ body {
 
     .ui.dropdown .menu .item {
         border-radius: 8px !important;
-        margin-bottom: 2px !important;
+        margin-bottom: 4px !important;
         padding: 14px 16px !important;
+        color: #ffffff !important; /* White text */
+        background: transparent !important;
+    }
+
+    .ui.dropdown .menu .item:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
     }
 
     .ui.dropdown .menu .item i.icon {
         font-size: 1.1rem !important;
         width: 1.5rem !important;
         text-align: center !important;
+        color: #ffffff !important;
+        opacity: 0.9 !important;
     }
 
     #problem-list-btn .text {
@@ -888,22 +901,28 @@ body {
         transform: translateY(0) !important;
     }
 
-    /* Stack panels vertically on mobile */
+    /* Fix: Prevent panels from stacking vertically on mobile */
     .lm_root {
-        display: flex !important;
-        flex-direction: column !important;
+        display: block !important;
     }
 
-    .lm_row, .lm_column {
-        flex-direction: column !important;
+    .lm_row, .lm_column, .lm_stack {
         width: 100% !important;
         height: 100% !important;
+        display: block !important;
     }
 
     .lm_item {
         width: 100% !important;
-        height: auto !important;
-        flex-grow: 1;
+        height: 100% !important;
+        position: absolute !important;
+        top: 0;
+        left: 0;
+    }
+
+    .lm_content {
+        height: 100% !important;
+        width: 100% !important;
     }
 
     .problem-list-drawer {
@@ -920,6 +939,10 @@ body {
     }
 
     .procode-showCopyright {
-        bottom: 60px !important;
+        display: none !important;
+    }
+
+    .lm_header {
+        display: none !important;
     }
 }
