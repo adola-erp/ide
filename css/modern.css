@@ -441,6 +441,34 @@ body.inverted #judge0-mobile-run-btn .run-icon-container {
 /* Specific fix for language dropdown items */
 #select-language-mobile ~ .menu .item,
 #select-language ~ .menu .item {
-    padding: 0.8rem 1rem !important;
+    padding: 1rem 1.25rem !important;
     font-size: 1rem !important;
+}
+
+/* Custom Large Box-Type Scrollbar for Dropdowns on Mobile */
+@media (max-width: 768px) {
+    .ui.dropdown .menu::-webkit-scrollbar {
+        width: 12px !important;
+        background-color: rgba(0, 0, 0, 0.03) !important;
+    }
+
+    .ui.dropdown .menu::-webkit-scrollbar-thumb {
+        background-color: var(--accent-color) !important;
+        border-radius: 2px !important; /* Blockier */
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        min-height: 50px !important; /* Even larger touch target */
+    }
+
+    body.inverted .ui.dropdown .menu::-webkit-scrollbar-thumb {
+        background-color: #4b5563 !important;
+    }
+
+    .ui.dropdown .menu::-webkit-scrollbar-track {
+        background-color: transparent !important;
+    }
+
+    /* Ensure content doesn't get covered by the larger scrollbar */
+    .ui.dropdown .menu {
+        padding-right: 4px !important;
+    }
 }
