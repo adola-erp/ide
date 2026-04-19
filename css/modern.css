@@ -197,6 +197,39 @@ body {
     background-color: var(--dark-bg) !important;
 }
 
+.header-icons .item {
+    padding: 0 10px !important;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.header-icons .item:hover {
+    opacity: 1;
+}
+
+.header-icons .item i.icon {
+    font-size: 1.2rem !important;
+}
+
+.mini-premium-btn {
+    background-color: #ffa11626 !important;
+    color: #ffa116 !important;
+    border: 1px solid #ffa1164d !important;
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
+    padding: 0.4rem 1rem !important;
+    font-weight: 600 !important;
+}
+
+.mini-premium-btn:hover {
+    background-color: #ffa1163d !important;
+}
+
+.profile-dropdown .menu {
+    right: 0 !important;
+    left: auto !important;
+}
+
 /* Modern Dropdown & Menu Styles */
 .ui.dropdown {
     background-color: #333333 !important;
@@ -210,6 +243,7 @@ body {
 .ui.selection.dropdown {
     padding: 0.5rem 1rem !important;
     min-height: auto !important;
+    border-radius: 20px !important; /* Highly rounded as per image.png */
 }
 
 .ui.dropdown .menu {
@@ -582,4 +616,72 @@ body {
 
 .wrong-answer #test-case-output {
     color: #ef4444;
+}
+
+/* Mobile Responsive Styles */
+@media only screen and (max-width: 768px) {
+    #judge0-site-navigation {
+        justify-content: space-between;
+        padding: 0 0.5rem !important;
+    }
+
+    .judge0-showLogo, .header-icons .item:not(.profile-dropdown):not(.premium-item) {
+        display: none !important;
+    }
+
+    #problem-list-btn .text {
+        display: none;
+    }
+
+    #problem-list-btn {
+        padding: 0 8px !important;
+    }
+
+    #select-language {
+        max-width: 120px;
+        font-size: 0.8rem !important;
+    }
+
+    .ui.buttons #submit-btn {
+        display: none !important;
+    }
+
+    #run-btn {
+        padding: 0.5rem 0.8rem !important;
+    }
+
+    #judge0-site-content {
+        bottom: 0 !important;
+    }
+
+    /* Stack panels vertically on mobile */
+    .lm_root {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .lm_row, .lm_column {
+        flex-direction: column !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .lm_item {
+        width: 100% !important;
+        height: auto !important;
+        flex-grow: 1;
+    }
+
+    .problem-list-drawer {
+        width: 100%;
+        left: -100%;
+    }
+
+    #judge0-problem-description {
+        padding: 15px;
+    }
+
+    #judge0-problem-description .ui.header {
+        font-size: 1.3rem !important;
+    }
 }

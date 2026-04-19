@@ -10,22 +10,28 @@ const problems = [
             <p>You can return the answer in any order.</p>
 
             <h3>Example 1:</h3>
-            <div class="ui segment">
+            <div class="ui segment example-block">
                 <p><strong>Input:</strong> nums = [2,7,11,15], target = 9</p>
                 <p><strong>Output:</strong> [0,1]</p>
                 <p><strong>Explanation:</strong> Because nums[0] + nums[1] == 9, we return [0, 1].</p>
             </div>
 
             <h3>Example 2:</h3>
-            <div class="ui segment">
+            <div class="ui segment example-block">
                 <p><strong>Input:</strong> nums = [3,2,4], target = 6</p>
                 <p><strong>Output:</strong> [1,2]</p>
             </div>
+
+            <h3>Example 3:</h3>
+            <div class="ui segment example-block">
+                <p><strong>Input:</strong> nums = [3,3], target = 6</p>
+                <p><strong>Output:</strong> [0,1]</p>
+            </div>
         `,
         testcases: [
-            { input: "nums = [2,7,11,15]\ntarget = 9", expected: "[0,1]" },
-            { input: "nums = [3,2,4]\ntarget = 6", expected: "[1,2]" },
-            { input: "nums = [3,3]\ntarget = 6", expected: "[0,1]" }
+            { input: "2 7 11 15\n9", expected: "[0,1]" },
+            { input: "3 2 4\n6", expected: "[1,2]" },
+            { input: "3 3\n6", expected: "[0,1]" }
         ]
     },
     {
@@ -38,16 +44,49 @@ const problems = [
             <p>You may assume the two numbers do not contain any leading zero, except the number 0 itself.</p>
 
             <h3>Example 1:</h3>
-            <div class="ui segment">
+            <div class="ui segment example-block">
                 <p><strong>Input:</strong> l1 = [2,4,3], l2 = [5,6,4]</p>
                 <p><strong>Output:</strong> [7,0,8]</p>
                 <p><strong>Explanation:</strong> 342 + 465 = 807.</p>
             </div>
+
+            <h3>Example 2:</h3>
+            <div class="ui segment example-block">
+                <p><strong>Input:</strong> l1 = [0], l2 = [0]</p>
+                <p><strong>Output:</strong> [0]</p>
+            </div>
         `,
         testcases: [
-            { input: "l1 = [2,4,3]\nl2 = [5,6,4]", expected: "[7,0,8]" },
-            { input: "l1 = [0]\nl2 = [0]", expected: "[0]" },
-            { input: "l1 = [9,9,9,9,9,9,9]\nl2 = [9,9,9,9]", expected: "[8,9,9,9,0,0,0,1]" }
+            { input: "2 4 3\n5 6 4", expected: "[7,0,8]" },
+            { input: "0\n0", expected: "[0]" }
+        ]
+    },
+    {
+        id: 3,
+        title: "Longest Substring Without Repeating Characters",
+        difficulty: "Medium",
+        solved: false,
+        description: `
+            <p>Given a string <code>s</code>, find the length of the <strong>longest substring</strong> without repeating characters.</p>
+
+            <h3>Example 1:</h3>
+            <div class="ui segment example-block">
+                <p><strong>Input:</strong> s = "abcabcbb"</p>
+                <p><strong>Output:</strong> 3</p>
+                <p><strong>Explanation:</strong> The answer is "abc", with the length of 3.</p>
+            </div>
+
+            <h3>Example 2:</h3>
+            <div class="ui segment example-block">
+                <p><strong>Input:</strong> s = "bbbbb"</p>
+                <p><strong>Output:</strong> 1</p>
+                <p><strong>Explanation:</strong> The answer is "b", with the length of 1.</p>
+            </div>
+        `,
+        testcases: [
+            { input: "abcabcbb", expected: "3" },
+            { input: "bbbbb", expected: "1" },
+            { input: "pwwkew", expected: "3" }
         ]
     },
     {
@@ -62,37 +101,44 @@ const problems = [
             <p><strong>Note:</strong> Assume we are dealing with an environment that could only store integers within the <strong>32-bit</strong> signed integer range: [−2<sup>31</sup>, 2<sup>31</sup> − 1]. For this problem, if the quotient is <strong>strictly greater than</strong> 2<sup>31</sup> − 1, then return 2<sup>31</sup> − 1, and if the quotient is <strong>strictly less than</strong> −2<sup>31</sup>, then return −2<sup>31</sup>.</p>
 
             <h3>Example 1:</h3>
-            <div class="ui segment">
+            <div class="ui segment example-block">
                 <p><strong>Input:</strong> dividend = 10, divisor = 3</p>
                 <p><strong>Output:</strong> 3</p>
                 <p><strong>Explanation:</strong> 10/3 = 3.33333.. which is truncated to 3.</p>
             </div>
 
             <h3>Example 2:</h3>
-            <div class="ui segment">
+            <div class="ui segment example-block">
                 <p><strong>Input:</strong> dividend = 7, divisor = -3</p>
                 <p><strong>Output:</strong> -2</p>
                 <p><strong>Explanation:</strong> 7/-3 = -2.33333.. which is truncated to -2.</p>
             </div>
         `,
         testcases: [
-            { input: "dividend = 10\ndivisor = 3", expected: "3" },
-            { input: "dividend = 7\ndivisor = -3", expected: "-2" }
+            { input: "10 3", expected: "3" },
+            { input: "7 -3", expected: "-2" }
         ]
     }
 ];
 
 // Fill with more mock data if needed
-for (let i = 3; i <= 50; i++) {
+for (let i = 4; i <= 50; i++) {
     if (i === 29) continue;
     problems.push({
         id: i,
-        title: `Mock Problem ${i}`,
+        title: `Problem ${i}`,
         difficulty: i % 3 === 0 ? "Hard" : (i % 2 === 0 ? "Medium" : "Easy"),
         solved: i % 5 === 0,
-        description: `<p>This is a mock description for problem ${i}.</p>`,
+        description: `
+            <p>This is a description for problem ${i}.</p>
+            <h3>Example 1:</h3>
+            <div class="ui segment example-block">
+                <p><strong>Input:</strong> input = ${i}</p>
+                <p><strong>Output:</strong> ${i * 2}</p>
+            </div>
+        `,
         testcases: [
-            { input: "input = 1", expected: "output = 1" }
+            { input: `${i}`, expected: `${i * 2}` }
         ]
     });
 }
@@ -133,12 +179,8 @@ function loadProblem(id) {
         }
     });
 
-    // Update stdin with first testcase
-    if (problem.testcases && problem.testcases.length > 0) {
-        // We need to access the editor, but problems.js is separate.
-        // We'll use a custom event or a global function if available.
-        window.dispatchEvent(new CustomEvent("problemLoaded", { detail: problem }));
-    }
+    // Update stdin with first testcase if available
+    window.dispatchEvent(new CustomEvent("problemLoaded", { detail: problem }));
 }
 
 function renderProblems(filter = "") {

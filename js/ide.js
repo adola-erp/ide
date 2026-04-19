@@ -180,27 +180,38 @@ function renderTestResults(data, actualOutput) {
     const runtimeEl = document.getElementById("test-result-runtime");
     const tabsContainer = document.getElementById("test-case-tabs");
 
-    // Get current problem testcases
-    // We'll try to find the problem from the global problems array if available
-    // For now we'll use a placeholder if not found
     const problem = window.currentProblem;
     const testcases = problem ? problem.testcases : [{ input: stdinEditor.getValue(), expected: "Unknown" }];
 
-    const isAccepted = data.status.id === 3; // 3 is Accepted in Judge0
+    let isAccepted = data.status.id === 3; // 3 is Accepted in Judge0
 
-    statusEl.innerText = isAccepted ? "Accepted" : data.status.description;
+    // Check if actual output matches expected for the first test case
+    // We only check the first one because we are only running once with the first testcase's input
+    if (isAccepted && problem && testcases.length > 0) {
+        const expected = testcases[0].expected.trim();
+        const actual = actualOutput.trim();
+        if (actual !== expected) {
+            isAccepted = false;
+        }
+    }
+
+    statusEl.innerText = isAccepted ? "Accepted" : (data.status.id === 3 ? "Wrong Answer" : data.status.description);
     statusEl.className = "result-status " + (isAccepted ? "accepted" : "wrong-answer");
     runtimeEl.innerText = `Runtime: ${Math.round(data.time * 1000) || 0} ms`;
 
     tabsContainer.innerHTML = "";
     testcases.forEach((tc, index) => {
         const tab = document.createElement("div");
-        tab.className = `test-case-tab ${index === 0 ? 'active' : ''} ${isAccepted ? 'pass' : 'fail'}`;
-        tab.innerHTML = `<i class="${isAccepted ? 'check' : 'close'} icon"></i> Case ${index + 1}`;
+        let casePass = isAccepted;
+        // In a real scenario, we'd run all test cases.
+        // For this demo, we mark all as fail if the first one failed, or pass if the first one passed.
+
+        tab.className = `test-case-tab ${index === 0 ? 'active' : ''} ${casePass ? 'pass' : 'fail'}`;
+        tab.innerHTML = `<i class="${casePass ? 'check' : 'close'} icon"></i> Case ${index + 1}`;
         tab.onclick = () => {
             document.querySelectorAll(".test-case-tab").forEach(t => t.classList.remove("active"));
             tab.classList.add("active");
-            showTestCaseDetails(tc, index === 0 ? actualOutput : "Output only available for first test case in this demo");
+            showTestCaseDetails(tc, index === 0 ? actualOutput : "Not run");
         };
         tabsContainer.appendChild(tab);
     });
