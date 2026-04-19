@@ -197,67 +197,98 @@ body {
     background-color: var(--dark-bg) !important;
 }
 
-.ui.selection.dropdown {
+/* Modern Dropdown & Menu Styles */
+.ui.dropdown {
     background-color: #333333 !important;
     color: rgba(255, 255, 255, 0.8) !important;
     border: 1px solid #444444 !important;
-    padding: 0.5rem 1rem !important;
-    min-height: auto !important;
     border-radius: 8px !important;
     font-family: 'Inter', sans-serif !important;
+    transition: all 0.2s ease !important;
+}
+
+.ui.selection.dropdown {
+    padding: 0.5rem 1rem !important;
+    min-height: auto !important;
+}
+
+.ui.dropdown .menu {
+    background-color: #333333 !important;
+    border: 1px solid #444444 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+    margin-top: 5px !important;
+    padding: 4px 0 !important;
+    z-index: 1100 !important;
 }
 
 .ui.selection.dropdown .menu {
-    background-color: #333333 !important;
-    border: 1px solid #444444 !important;
     border-radius: 0 0 8px 8px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
-    margin-top: 2px !important;
+    margin-top: 1px !important;
 }
 
-.ui.selection.dropdown .item {
+.ui.dropdown .menu .item {
     color: rgba(255, 255, 255, 0.8) !important;
-    border-top: 1px solid #3a3a3a !important;
     padding: 10px 15px !important;
-    font-size: 0.95rem !important;
+    font-size: 0.9rem !important;
     transition: background 0.2s !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.03) !important;
+    line-height: 1.2 !important;
 }
 
-.ui.selection.dropdown .item:first-child {
+.ui.dropdown .menu .item:first-child {
     border-top: none !important;
 }
 
-.ui.selection.dropdown .item:hover,
-.ui.selection.dropdown .item.selected {
+.ui.dropdown .menu .item:hover,
+.ui.dropdown .menu .item.selected,
+.ui.dropdown .menu .item.active {
     background-color: #3e3e3e !important;
     color: white !important;
 }
 
-/* Custom Scrollbar for Dropdown Menu */
-.ui.selection.dropdown .menu::-webkit-scrollbar {
-    width: 8px;
+.ui.dropdown .menu .item i.icon {
+    margin-right: 10px !important;
+    opacity: 0.7;
 }
 
-.ui.selection.dropdown .menu::-webkit-scrollbar-track {
+.ui.dropdown .menu .item .description {
+    color: rgba(255, 255, 255, 0.4) !important;
+    float: right !important;
+    margin-left: 20px !important;
+    font-size: 0.8rem !important;
+}
+
+/* Custom Scrollbar for Dropdown Menu */
+.ui.dropdown .menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ui.dropdown .menu::-webkit-scrollbar-track {
     background: transparent;
 }
 
-.ui.selection.dropdown .menu::-webkit-scrollbar-thumb {
+.ui.dropdown .menu::-webkit-scrollbar-thumb {
     background: #1a1a1a;
     border-radius: 10px;
-    border: 2px solid #333333;
+    border: 1px solid #333333;
 }
 
-.ui.selection.dropdown .menu::-webkit-scrollbar-thumb:hover {
+.ui.dropdown .menu::-webkit-scrollbar-thumb:hover {
     background: #111111;
 }
 
-.ui.selection.dropdown .text {
+.ui.dropdown .text {
     color: rgba(255, 255, 255, 0.8) !important;
 }
 
-.ui.selection.dropdown .dropdown.icon {
+.ui.dropdown .dropdown.icon {
     color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Simple dropdown items (like File menu) */
+.ui.menu .ui.dropdown.item .menu {
+    border-radius: 8px !important;
 }
 
 /* Hide bulky inputs but keep them in DOM */
