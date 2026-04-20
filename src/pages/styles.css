@@ -1,8 +1,13 @@
 :root {
     --dark-bg: #1a1a1a;
     --darker-bg: #0f0f0f;
-    --panel-bg: #262626;
+    --panel-bg: #1e1e1e;
+    --accent-color: #ffa116;
+    --accent-hover: #e69114;
     --text-color: #eff1f6;
+    --secondary-text: #9aa0a6;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --nav-height: 60px;
 }
 
 body {
@@ -10,78 +15,151 @@ body {
     color: var(--text-color) !important;
     margin: 0;
     padding: 0;
+    font-family: 'Inter', sans-serif;
 }
 
-.ui.container {
-    padding-top: 50px;
-    padding-bottom: 50px;
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.ui.segment, .ui.card {
-    background-color: var(--panel-bg) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: var(--text-color) !important;
+.page-nav {
+    height: var(--nav-height);
+    background-color: var(--dark-bg);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-.ui.header {
-    color: white !important;
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.page-container {
+    flex: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 3rem 1rem;
+}
+
+.modern-card {
+    background-color: var(--panel-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.modern-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.modern-subtitle {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: white;
 }
 
 .ui.form label {
-    color: var(--text-color) !important;
+    color: var(--secondary-text) !important;
+    font-weight: 500 !important;
+    margin-bottom: 0.5rem !important;
 }
 
-.ui.form input, .ui.form select {
-    background-color: var(--dark-bg) !important;
+.ui.form input, .ui.form select, .ui.form textarea {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
     color: white !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
 }
 
-.ui.card .header {
-    color: white !important;
+.ui.form input:focus, .ui.form select:focus {
+    border-color: var(--accent-color) !important;
 }
 
-.ui.card .meta {
-    color: rgba(255, 255, 255, 0.5) !important;
+.ui.primary.button {
+    background-color: var(--accent-color) !important;
+    color: #1a1a1a !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
 }
 
-.ui.card .description {
-    color: rgba(255, 255, 255, 0.8) !important;
+.ui.primary.button:hover {
+    background-color: var(--accent-hover) !important;
 }
 
-.resize-handle-h {
-  width: 4px;
-  background-color: #000;
-  transition: background-color 0.2s;
-  cursor: col-resize;
+.ui.button {
+    border-radius: 8px !important;
 }
 
-.resize-handle-h:hover, .resize-handle-h:active {
-  background-color: #3b82f6;
+.modern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
 }
 
-.resize-handle-v {
-  height: 4px;
-  background-color: #000;
-  transition: background-color 0.2s;
-  cursor: row-resize;
+.feature-card {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: transform 0.2s, border-color 0.2s;
 }
 
-.resize-handle-v:hover, .resize-handle-v:active {
-  background-color: #3b82f6;
+.feature-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-color);
 }
 
-.procode-app * {
-  box-sizing: border-box;
+.feature-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 161, 22, 0.1);
+    color: var(--accent-color);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
 }
 
+.feature-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.feature-desc {
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: var(--darker-bg);
 }
 
 ::-webkit-scrollbar-thumb {
