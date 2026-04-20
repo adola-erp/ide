@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Problem } from '../types'
 
 // In a real app, this would come from an API or a shared JS file
@@ -21,7 +21,7 @@ const MOCK_PROBLEMS: Problem[] = [
   }
 ]
 
-export const useProblem = (initialId: number = 1) => {
+export const useProblem = () => {
   const [currentProblem, setCurrentProblem] = useState<Problem>(MOCK_PROBLEMS[0])
 
   const selectProblem = (id: number) => {
