@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels'
+import { Panel, Group, Separator } from 'react-resizable-panels'
 import Header from './components/Header'
 import ProblemPanel from './components/ProblemPanel'
 import EditorPanel from './components/EditorPanel'
@@ -7,7 +7,7 @@ import TestResultsPanel from './components/TestResultsPanel'
 import { useProblem } from './hooks/useProblem'
 
 const App: React.FC = () => {
-  const { currentProblem, selectProblem, allProblems } = useProblem(1)
+  const { currentProblem } = useProblem()
   const [sourceCode, setSourceCode] = useState('#include <iostream>\n\nint main() {\n    std::cout << "Hello World";\n    return 0;\n}')
 
   const handleRun = () => {
@@ -24,27 +24,27 @@ const App: React.FC = () => {
 
       <main style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         <div className="desktop-layout" style={{ height: '100%' }}>
-          <PanelGroup direction="horizontal">
+          <Group orientation="horizontal">
             <Panel defaultSize={30} minSize={20}>
               <ProblemPanel problem={currentProblem} />
             </Panel>
 
-            <PanelResizeHandle className="resize-handle-h" />
+            <Separator className="resize-handle-h" />
 
             <Panel defaultSize={70}>
-              <PanelGroup direction="vertical">
+              <Group orientation="vertical">
                 <Panel defaultSize={70} minSize={30}>
-                  <EditorPanel code={sourceCode} onChange={setSourceCode} />
+                  <EditorPanel code={sourceCode} onChange={(value) => setSourceCode(value || '')} />
                 </Panel>
 
-                <PanelResizeHandle className="resize-handle-v" />
+                <Separator className="resize-handle-v" />
 
                 <Panel defaultSize={30} minSize={20}>
                   <TestResultsPanel />
                 </Panel>
-              </PanelGroup>
+              </Group>
             </Panel>
-          </PanelGroup>
+          </Group>
         </div>
       </main>
 

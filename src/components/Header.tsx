@@ -1,5 +1,5 @@
 import React from 'react'
-import { Settings, User, Plus, LayoutGrid, Moon, Sun, Flame, Play, CloudUpload } from 'lucide-react'
+import { Settings, LayoutGrid, Sun, Flame, Play, CloudUpload } from 'lucide-react'
 
 interface HeaderProps {
   onRun: () => void
