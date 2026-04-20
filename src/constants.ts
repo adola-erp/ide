@@ -41,5 +41,47 @@ export const SUPPORTED_LANGUAGES: Language[] = [
     name: "TypeScript (5.6.2)",
     monacoMode: "typescript",
     defaultCode: "console.log(\"Hello World\");"
+  },
+  {
+    id: 106,
+    name: "Go (1.22.0)",
+    monacoMode: "go",
+    defaultCode: "package main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Println(\"Hello World\")\n}"
+  },
+  {
+    id: 108,
+    name: "Rust (1.85.0)",
+    monacoMode: "rust",
+    defaultCode: "fn main() {\n    println!(\"Hello World\");\n}"
+  },
+  {
+    id: 72,
+    name: "Ruby (2.7.0)",
+    monacoMode: "ruby",
+    defaultCode: "puts \"Hello World\""
+  },
+  {
+    id: 98,
+    name: "PHP (8.3.11)",
+    monacoMode: "php",
+    defaultCode: "<?php\necho \"Hello World\";"
+  },
+  {
+    id: 51,
+    name: "C# (Mono 6.6.0.161)",
+    monacoMode: "csharp",
+    defaultCode: "using System;\n\npublic class HelloWorld\n{\n    public static void main(string[] args)\n    {\n        Console.WriteLine(\"Hello World\");\n    }\n}"
+  },
+  {
+    id: 83,
+    name: "Swift (5.2.3)",
+    monacoMode: "swift",
+    defaultCode: "print(\"Hello World\")"
+  },
+  {
+    id: 78,
+    name: "Kotlin (1.3.70)",
+    monacoMode: "kotlin",
+    defaultCode: "fun main(args: Array<String>) {\n    println(\"Hello World\")\n}"
   }
 ];
