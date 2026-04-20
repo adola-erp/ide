@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/settings", "destination": "/settings.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/premium", "destination": "/premium.html" },
+    { "source": "/add-user", "destination": "/add-user.html" },
+    { "source": "/apps", "destination": "/apps.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

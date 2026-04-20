@@ -18,7 +18,34 @@
     <title>ProCode IDE</title>
 </head>
 <body style="background-color: #0f0f0f; color: white; margin: 0; padding: 0; overflow: hidden; height: 100vh;">
+    <!-- Problem List Drawer -->
+    <div id="procode-problem-list-drawer" class="problem-list-drawer">
+        <div class="drawer-header">
+            <div class="drawer-title">Problems</div>
+            <button id="close-drawer-btn" class="ui icon button drawer-close">
+                <i class="close icon"></i>
+            </button>
+        </div>
+        <div class="drawer-search-bar">
+            <div class="ui icon input search-input-container">
+                <input type="text" id="problem-search" placeholder="Search problems...">
+                <i class="search icon"></i>
+            </div>
+        </div>
+        <div id="problem-items-container" class="problem-items">
+            <!-- Problems will be rendered here by problems.js -->
+        </div>
+    </div>
+
     <div id="root"></div>
+
+    <!-- Theme toggle button (hidden, triggered by React header) -->
+    <button id="procode-theme-toggle-btn" style="display: none;"></button>
+    <i id="procode-theme-toggle-btn-icon" style="display: none;"></i>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.js"></script>
+    <script type="module" src="/js/problems.js"></script>
     <script type="module" src="/src/main.tsx"></script>
     <script>
         if ("serviceWorker" in navigator) {
