@@ -1,9 +1,11 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Panel, Group, Separator } from 'react-resizable-panels'
 import Header from './components/Header'
 import ProblemPanel from './components/ProblemPanel'
 import EditorPanel from './components/EditorPanel'
 import TestResultsPanel from './components/TestResultsPanel'
+import ProblemListDrawer from './components/ProblemListDrawer'
+import MobileFooter from './components/MobileFooter'
 import { useProblem } from './hooks/useProblem'
 import { SUPPORTED_LANGUAGES } from './constants'
 import { ExecutionResult } from './types'
@@ -24,11 +26,22 @@ const decode = (bytes: string) => {
 };
 
 const App: React.FC = () => {
-  const { currentProblem } = useProblem()
+  const { currentProblem, selectProblem, allProblems } = useProblem()
   const [selectedLanguageId, setSelectedLanguageId] = useState(105) // Default to C++
   const [sourceCode, setSourceCode] = useState(SUPPORTED_LANGUAGES[0].defaultCode)
   const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null)
   const [isRunning, setIsRunning] = useState(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState('editor')
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const handleLanguageChange = (id: number) => {
     setSelectedLanguageId(id)
@@ -78,6 +91,7 @@ const App: React.FC = () => {
   const runCode = async (code: string, languageId: number, stdin: string = "") => {
     setIsRunning(true);
     setExecutionResult(null);
+    if (isMobile) setActiveTab('testcase');
 
     try {
       const response = await fetch(`${CE_BASE_URL}/submissions?base64_encoded=true&wait=false`, {
@@ -110,14 +124,11 @@ const App: React.FC = () => {
   };
 
   const handleRun = () => {
-    // For "Run", we use the first test case input if available
     const stdin = currentProblem.testcases[0]?.input || "";
     runCode(sourceCode, selectedLanguageId, stdin);
   }
 
   const handleSubmit = () => {
-    // For "Submit", in a real app we'd run all test cases.
-    // Here we'll just run with the first one but mark it as a submission.
     const stdin = currentProblem.testcases[0]?.input || "";
     runCode(sourceCode, selectedLanguageId, stdin);
   }
@@ -136,10 +147,7 @@ const App: React.FC = () => {
   }
 
   const handleProblemListClick = () => {
-    const drawer = document.getElementById('procode-problem-list-drawer')
-    if (drawer) {
-      drawer.classList.toggle('open')
-    }
+    setIsDrawerOpen(!isDrawerOpen)
   }
 
   return (
@@ -154,40 +162,75 @@ const App: React.FC = () => {
         isRunning={isRunning}
       />
 
+      <ProblemListDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        problems={allProblems}
+        onSelectProblem={selectProblem}
+        currentProblemId={currentProblem.id}
+      />
+
       <main style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-        <div className="desktop-layout" style={{ height: '100%' }}>
-          <Group orientation="horizontal">
-            <Panel defaultSize={30} minSize={20}>
-              <ProblemPanel problem={currentProblem} />
-            </Panel>
+        {isMobile ? (
+          <div className="mobile-layout" style={{ height: '100%', overflowY: 'auto' }}>
+            {activeTab === 'description' && <ProblemPanel problem={currentProblem} />}
+            {activeTab === 'editor' && (
+              <EditorPanel
+                code={sourceCode}
+                onChange={(value) => setSourceCode(value || '')}
+                selectedLanguageId={selectedLanguageId}
+                onLanguageChange={handleLanguageChange}
+              />
+            )}
+            {activeTab === 'testcase' && <TestResultsPanel result={executionResult} isRunning={isRunning} problem={currentProblem} />}
+          </div>
+        ) : (
+          <div className="desktop-layout" style={{ height: '100%' }}>
+            <Group orientation="horizontal">
+              <Panel defaultSize={30} minSize={20}>
+                <ProblemPanel problem={currentProblem} />
+              </Panel>
 
-            <Separator className="resize-handle-h" />
+              <Separator className="resize-handle-h" />
 
-            <Panel defaultSize={70}>
-              <Group orientation="vertical">
-                <Panel defaultSize={70} minSize={30}>
-                  <EditorPanel
-                    code={sourceCode}
-                    onChange={(value) => setSourceCode(value || '')}
-                    selectedLanguageId={selectedLanguageId}
-                    onLanguageChange={handleLanguageChange}
-                  />
-                </Panel>
+              <Panel defaultSize={70}>
+                <Group orientation="vertical">
+                  <Panel defaultSize={70} minSize={30}>
+                    <EditorPanel
+                      code={sourceCode}
+                      onChange={(value) => setSourceCode(value || '')}
+                      selectedLanguageId={selectedLanguageId}
+                      onLanguageChange={handleLanguageChange}
+                    />
+                  </Panel>
 
-                <Separator className="resize-handle-v" />
+                  <Separator className="resize-handle-v" />
 
-                <Panel defaultSize={30} minSize={20}>
-                  <TestResultsPanel result={executionResult} isRunning={isRunning} problem={currentProblem} />
-                </Panel>
-              </Group>
-            </Panel>
-          </Group>
-        </div>
+                  <Panel defaultSize={30} minSize={20}>
+                    <TestResultsPanel result={executionResult} isRunning={isRunning} problem={currentProblem} />
+                  </Panel>
+                </Group>
+              </Panel>
+            </Group>
+          </div>
+        )}
       </main>
 
-      <div className="procode-showCopyright" style={{ height: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#666', borderTop: '1px solid #222' }}>
-        © 2016-2026 ProCode – All Rights Reserved.
-      </div>
+      {isMobile && (
+        <MobileFooter
+          onRun={handleRun}
+          onSubmit={handleSubmit}
+          onTabChange={setActiveTab}
+          activeTab={activeTab}
+          isRunning={isRunning}
+        />
+      )}
+
+      {!isMobile && (
+        <div className="procode-showCopyright" style={{ height: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#666', borderTop: '1px solid #222' }}>
+          © 2016-2026 ProCode – All Rights Reserved.
+        </div>
+      )}
     </div>
   )
 }
