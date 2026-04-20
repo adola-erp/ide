@@ -1,5 +1,5 @@
 import React from 'react'
-import { Settings, LayoutGrid, Sun, Flame, Play, CloudUpload } from 'lucide-react'
+import { Settings, LayoutGrid, Sun, Flame, Play, CloudUpload, Loader2 } from 'lucide-react'
 
 interface HeaderProps {
   onRun: () => void
@@ -8,6 +8,7 @@ interface HeaderProps {
   onSettingsClick: () => void
   onAppsClick: () => void
   onProblemListClick: () => void
+  isRunning?: boolean
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -16,7 +17,8 @@ const Header: React.FC<HeaderProps> = ({
   onToggleTheme,
   onSettingsClick,
   onAppsClick,
-  onProblemListClick
+  onProblemListClick,
+  isRunning = false
 }) => {
   return (
     <header style={{
@@ -41,11 +43,22 @@ const Header: React.FC<HeaderProps> = ({
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-         <button onClick={onRun} className="ui basic inverted icon button" style={{ color: '#2cbb5d' }}>
-           <Play size={18} fill="#2cbb5d" />
+         <button
+           onClick={onRun}
+           disabled={isRunning}
+           className="ui basic inverted icon button"
+           style={{ color: '#2cbb5d' }}
+         >
+           {isRunning ? <Loader2 size={18} className="animate-spin" /> : <Play size={18} fill="#2cbb5d" />}
          </button>
-         <button onClick={onSubmit} className="ui green button" style={{ borderRadius: '8px', padding: '8px 15px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-           <CloudUpload size={18} /> <span>Submit</span>
+         <button
+           onClick={onSubmit}
+           disabled={isRunning}
+           className="ui green button"
+           style={{ borderRadius: '8px', padding: '8px 15px', display: 'flex', alignItems: 'center', gap: '5px' }}
+         >
+           {isRunning ? <Loader2 size={18} className="animate-spin" /> : <CloudUpload size={18} />}
+           <span>Submit</span>
          </button>
       </div>
 
