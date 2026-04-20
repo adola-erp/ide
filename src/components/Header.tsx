@@ -4,9 +4,20 @@ import { Settings, LayoutGrid, Sun, Flame, Play, CloudUpload } from 'lucide-reac
 interface HeaderProps {
   onRun: () => void
   onSubmit: () => void
+  onToggleTheme: () => void
+  onSettingsClick: () => void
+  onAppsClick: () => void
+  onProblemListClick: () => void
 }
 
-const Header: React.FC<HeaderProps> = ({ onRun, onSubmit }) => {
+const Header: React.FC<HeaderProps> = ({
+  onRun,
+  onSubmit,
+  onToggleTheme,
+  onSettingsClick,
+  onAppsClick,
+  onProblemListClick
+}) => {
   return (
     <header style={{
       height: '50px',
@@ -20,7 +31,11 @@ const Header: React.FC<HeaderProps> = ({ onRun, onSubmit }) => {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
         <div className="procode-logo" style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#ffa116' }}>θ</div>
-        <button className="ui basic inverted button" style={{ borderRadius: '20px', padding: '6px 15px', fontSize: '0.85rem' }}>
+        <button
+          onClick={onProblemListClick}
+          className="ui basic inverted button"
+          style={{ borderRadius: '20px', padding: '6px 15px', fontSize: '0.85rem' }}
+        >
           Problem List
         </button>
       </div>
@@ -35,9 +50,9 @@ const Header: React.FC<HeaderProps> = ({ onRun, onSubmit }) => {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-         <button className="ui basic inverted icon button"><Sun size={18} /></button>
-         <button className="ui basic inverted icon button"><LayoutGrid size={18} /></button>
-         <button className="ui basic inverted icon button"><Settings size={18} /></button>
+         <button onClick={onToggleTheme} className="ui basic inverted icon button"><Sun size={18} /></button>
+         <button onClick={onAppsClick} className="ui basic inverted icon button"><LayoutGrid size={18} /></button>
+         <button onClick={onSettingsClick} className="ui basic inverted icon button"><Settings size={18} /></button>
          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#aaa', fontSize: '0.9rem' }}>
            <Flame size={18} /> <span>0</span>
          </div>

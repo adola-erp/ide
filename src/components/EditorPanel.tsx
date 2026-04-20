@@ -1,21 +1,50 @@
 import React from 'react'
 import Editor from '@monaco-editor/react'
+import { SUPPORTED_LANGUAGES } from '../constants'
 
 interface EditorPanelProps {
   code: string
   onChange: (value: string | undefined) => void
+  selectedLanguageId: number
+  onLanguageChange: (languageId: number) => void
 }
 
-const EditorPanel: React.FC<EditorPanelProps> = ({ code, onChange }) => {
+const EditorPanel: React.FC<EditorPanelProps> = ({ code, onChange, selectedLanguageId, onLanguageChange }) => {
+  const selectedLanguage = SUPPORTED_LANGUAGES.find(l => l.id === selectedLanguageId) || SUPPORTED_LANGUAGES[0];
+
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ height: '40px', backgroundColor: '#252525', display: 'flex', alignItems: 'center', padding: '0 10px', borderBottom: '1px solid #111' }}>
-        <span style={{ fontSize: '0.8rem', color: '#aaa' }}>C++ (GCC 14.1.0)</span>
+      <div style={{
+        height: '40px',
+        backgroundColor: '#252525',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 10px',
+        borderBottom: '1px solid #111',
+        justifyContent: 'space-between'
+      }}>
+        <select
+          value={selectedLanguageId}
+          onChange={(e) => onLanguageChange(Number(e.target.value))}
+          style={{
+            backgroundColor: '#333',
+            color: '#fff',
+            border: '1px solid #444',
+            borderRadius: '4px',
+            padding: '2px 8px',
+            fontSize: '0.85rem',
+            cursor: 'pointer'
+          }}
+        >
+          {SUPPORTED_LANGUAGES.map(lang => (
+            <option key={lang.id} value={lang.id}>{lang.name}</option>
+          ))}
+        </select>
       </div>
       <div style={{ flex: 1 }}>
         <Editor
           height="100%"
-          defaultLanguage="cpp"
+          language={selectedLanguage.monacoMode}
           value={code}
           onChange={onChange}
           theme="vs-dark"
