@@ -37,7 +37,7 @@ const App: React.FC = () => {
   const { currentProblem, selectProblem, allProblems } = useProblem()
   const [selectedLanguageId, setSelectedLanguageId] = useState(105) // Default to C++
   const [sourceCode, setSourceCode] = useState(SUPPORTED_LANGUAGES[0].defaultCode)
-  const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null)
+  const [executionResults, setExecutionResults] = useState<Record<number, ExecutionResult>>({})
   const [isRunning, setIsRunning] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('editor')
@@ -45,7 +45,7 @@ const App: React.FC = () => {
   const [customInput, setCustomInput] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const pollingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pollingRefs = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
   const abortRef = useRef(false);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const App: React.FC = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
       abortRef.current = true;
-      if (pollingRef.current) clearTimeout(pollingRef.current);
+      Object.values(pollingRefs.current).forEach(clearTimeout);
     }
   }, [])
 
@@ -68,13 +68,14 @@ const App: React.FC = () => {
     if (lang) {
         setSourceCode(lang.defaultCode);
     }
+    setExecutionResults({});
   }, [currentProblem, selectedLanguageId])
 
   const handleLanguageChange = (id: number) => {
     setSelectedLanguageId(id)
   }
 
-  const fetchSubmission = useCallback(async (token: string, iteration = 1): Promise<ExecutionResult | null> => {
+  const fetchSubmission = useCallback(async (token: string, caseIdx: number, iteration = 1): Promise<ExecutionResult | null> => {
     if (abortRef.current) return null;
 
     if (iteration >= 100) {
@@ -92,7 +93,7 @@ const App: React.FC = () => {
 
       if (data.status.id <= 2) { // In Queue or Processing
         return new Promise((resolve) => {
-           pollingRef.current = setTimeout(() => resolve(fetchSubmission(token, iteration + 1)), 1000);
+           pollingRefs.current[caseIdx] = setTimeout(() => resolve(fetchSubmission(token, caseIdx, iteration + 1)), 1000);
         });
       } else {
         return {
@@ -115,47 +116,48 @@ const App: React.FC = () => {
     }
   }, []);
 
-  const runCode = useCallback(async (code: string, languageId: number, stdin: string = "", isSubmit: boolean = false) => {
-    if (pollingRef.current) clearTimeout(pollingRef.current);
+  const runCode = useCallback(async (code: string, languageId: number, inputs: string[], isSubmit: boolean = false) => {
+    Object.values(pollingRefs.current).forEach(clearTimeout);
+    pollingRefs.current = {};
 
     setIsRunning(true);
     setIsSubmitting(isSubmit);
-    setExecutionResult(null);
+    setExecutionResults({});
     if (isMobile) setActiveTab('testcase');
 
     try {
-      // If it's a submit, we could potentially run all testcases.
-      // For now, let's just mark it as submit in the result.
-      const response = await fetch(`${CE_BASE_URL}/submissions?base64_encoded=true&wait=false`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          source_code: toBase64(code),
-          language_id: languageId,
-          stdin: toBase64(stdin),
-          redirect_stderr_to_stdout: false
-        }),
-      });
+      const tokens = await Promise.all(inputs.map(async (stdin) => {
+        const response = await fetch(`${CE_BASE_URL}/submissions?base64_encoded=true&wait=false`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source_code: toBase64(code),
+            language_id: languageId,
+            stdin: toBase64(stdin),
+            redirect_stderr_to_stdout: false
+          }),
+        });
+        const data = await response.json();
+        return data.token;
+      }));
 
       if (abortRef.current) return;
 
-      const data = await response.json();
-      if (data.token) {
-        const result = await fetchSubmission(data.token);
-        if (result) {
-            setExecutionResult(result);
-        }
-      } else {
-        throw new Error('No token received');
-      }
+      const results = await Promise.all(tokens.map((token, idx) => fetchSubmission(token, idx)));
+
+      const resultsMap: Record<number, ExecutionResult> = {};
+      results.forEach((res, idx) => {
+        if (res) resultsMap[idx] = res;
+      });
+      setExecutionResults(resultsMap);
     } catch (error) {
       if (abortRef.current) return;
       console.error('Error running code:', error);
-      setExecutionResult({
-        status: { id: 13, description: 'Internal Error' },
-        stderr: 'Failed to initiate code execution.'
+      setExecutionResults({
+        0: {
+          status: { id: 13, description: 'Internal Error' },
+          stderr: 'Failed to initiate code execution.'
+        }
       });
     } finally {
       setIsRunning(false);
@@ -164,13 +166,12 @@ const App: React.FC = () => {
   }, [fetchSubmission, isMobile]);
 
   const handleRun = () => {
-    runCode(sourceCode, selectedLanguageId, customInput, false);
+    runCode(sourceCode, selectedLanguageId, [customInput], false);
   }
 
   const handleSubmit = () => {
-    // For submit, use the first testcase input as default if customInput is empty
-    const input = customInput || currentProblem.testcases[0]?.input || "";
-    runCode(sourceCode, selectedLanguageId, input, true);
+    const inputs = currentProblem.testcases.map(tc => tc.input);
+    runCode(sourceCode, selectedLanguageId, inputs, true);
   }
 
   const handleToggleTheme = () => {
@@ -224,11 +225,12 @@ const App: React.FC = () => {
             )}
             {activeTab === 'testcase' && (
               <TestResultsPanel
-                result={executionResult}
+                results={executionResults}
                 isRunning={isRunning}
                 problem={currentProblem}
                 customInput={customInput}
                 setCustomInput={setCustomInput}
+                isSubmitting={isSubmitting}
               />
             )}
           </div>
@@ -256,7 +258,7 @@ const App: React.FC = () => {
 
                   <Panel defaultSize={35} minSize={20}>
                     <TestResultsPanel
-                      result={executionResult}
+                      results={executionResults}
                       isRunning={isRunning}
                       problem={currentProblem}
                       customInput={customInput}

@@ -3,7 +3,7 @@ import { ExecutionResult, Problem } from '../types'
 import { Loader2, CheckCircle2, XCircle, AlertCircle, Info, Terminal, ChevronUp } from 'lucide-react'
 
 interface TestResultsPanelProps {
-  result: ExecutionResult | null
+  results: Record<number, ExecutionResult>
   isRunning?: boolean
   problem: Problem
   customInput: string
@@ -12,7 +12,7 @@ interface TestResultsPanelProps {
 }
 
 const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
-  result,
+  results,
   isRunning = false,
   problem,
   customInput,
@@ -25,17 +25,20 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
   useEffect(() => {
     if (isRunning) {
       setActiveTab('result')
-    } else if (result) {
+      setSelectedTestCase(0)
+    } else if (Object.keys(results).length > 0) {
       setActiveTab('result')
+      setSelectedTestCase(0)
     }
-  }, [isRunning, result])
+  }, [isRunning, results])
 
   useEffect(() => {
-    if (problem.testcases[selectedTestCase]) {
+    if (activeTab === 'testcase' && problem.testcases[selectedTestCase]) {
       setCustomInput(problem.testcases[selectedTestCase].input);
     }
-  }, [selectedTestCase, problem, setCustomInput])
+  }, [selectedTestCase, problem, setCustomInput, activeTab])
 
+  const currentResult = results[selectedTestCase];
   const testcase = problem.testcases[selectedTestCase] || problem.testcases[0] || { input: "", expected: "" };
 
   const getStatusColor = (id: number) => {
@@ -56,6 +59,15 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
       default: return <Info size={24} color="#ef4743" />;
     }
   };
+
+  const isPassed = (res: ExecutionResult, expected: string) => {
+    if (res.status.id !== 3) return false;
+    if (!res.stdout) return false;
+    return res.stdout.trim() === expected.trim();
+  }
+
+  const allPassed = isSubmitting && Object.keys(results).length === problem.testcases.length &&
+                    problem.testcases.every((tc, i) => results[i] && isPassed(results[i], tc.expected));
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#1a1a1a', borderTop: '1px solid #222' }}>
@@ -180,127 +192,126 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
                 </div>
                 <div style={{ color: '#aaa', fontSize: '1rem', fontWeight: 500 }}>{isSubmitting ? 'Submitting...' : 'Running...'}</div>
               </div>
-            ) : !result ? (
+            ) : Object.keys(results).length === 0 ? (
               <div style={{ color: '#666', textAlign: 'center', marginTop: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
                 <Terminal size={40} opacity={0.3} />
                 <div style={{ fontSize: '0.95rem' }}>Run your code to see the test results.</div>
               </div>
             ) : (
               <div>
-                <div style={{
-                  backgroundColor: `${getStatusColor(result.status.id)}15`,
-                  borderRadius: '12px',
-                  padding: '20px',
-                  marginBottom: '25px',
-                  border: `1px solid ${getStatusColor(result.status.id)}30`
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      {getStatusIcon(result.status.id)}
-                      <span style={{
-                        color: getStatusColor(result.status.id),
-                        fontWeight: 700,
-                        fontSize: '1.4rem'
-                      }}>
-                        {result.status.description}
-                      </span>
+                {/* Summary bar for multiple test cases */}
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+                  {problem.testcases.map((tc, idx) => {
+                    const res = results[idx];
+
+                    const color = res ? (isPassed(res, tc.expected) ? '#2cbb5d' : '#ef4743') : '#444';
+
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedTestCase(idx)}
+                        style={{
+                          padding: '6px 12px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          backgroundColor: selectedTestCase === idx ? '#333' : 'rgba(255,255,255,0.03)',
+                          color: selectedTestCase === idx ? '#fff' : '#888',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: color }}></div>
+                        Case {idx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {currentResult && (
+                  <div className="fade-in">
+                    <div style={{
+                      backgroundColor: `${isPassed(currentResult, testcase.expected) ? '#2cbb5d' : getStatusColor(currentResult.status.id)}15`,
+                      borderRadius: '12px',
+                      padding: '20px',
+                      marginBottom: '25px',
+                      border: `1px solid ${isPassed(currentResult, testcase.expected) ? '#2cbb5d' : getStatusColor(currentResult.status.id)}30`
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          {getStatusIcon(isPassed(currentResult, testcase.expected) ? 3 : currentResult.status.id)}
+                          <span style={{
+                            color: isPassed(currentResult, testcase.expected) ? '#2cbb5d' : getStatusColor(currentResult.status.id),
+                            fontWeight: 700,
+                            fontSize: '1.4rem'
+                          }}>
+                            {isPassed(currentResult, testcase.expected) ? 'Accepted' : currentResult.status.description}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                           {currentResult.time && (
+                             <div style={{ textAlign: 'right' }}>
+                               <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', marginBottom: '2px' }}>Runtime</div>
+                               <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{Math.round(parseFloat(currentResult.time) * 1000)} ms</div>
+                             </div>
+                           )}
+                        </div>
+                      </div>
+
+                      {allPassed && selectedTestCase === 0 && (
+                         <div style={{ color: '#2cbb5d', fontSize: '0.9rem', fontWeight: 600, marginTop: '10px' }}>
+                            🎉 Well done! You passed all test cases.
+                         </div>
+                      )}
                     </div>
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                       {result.time && (
-                         <div style={{ textAlign: 'right' }}>
-                           <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', marginBottom: '2px' }}>Runtime</div>
-                           <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{Math.round(parseFloat(result.time) * 1000)} ms</div>
-                         </div>
-                       )}
-                       {result.memory && (
-                         <div style={{ textAlign: 'right', marginLeft: '15px' }}>
-                           <div style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', marginBottom: '2px' }}>Memory</div>
-                           <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>{(result.memory / 1024).toFixed(1)} MB</div>
-                         </div>
-                       )}
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div style={{ color: '#888', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>Input</div>
+                        <pre style={{ backgroundColor: '#0f0f0f', padding: '15px', borderRadius: '8px', margin: 0, color: '#eff1f6', fontFamily: 'JetBrains Mono, monospace', border: '1px solid #333', fontSize: '0.9rem' }}>{testcase.input}</pre>
+                      </div>
+
+                      {currentResult.stdout && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          <div style={{ color: '#888', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>Output</div>
+                          <pre style={{
+                            backgroundColor: '#0f0f0f',
+                            padding: '15px',
+                            borderRadius: '8px',
+                            margin: 0,
+                            whiteSpace: 'pre-wrap',
+                            fontFamily: 'JetBrains Mono, monospace',
+                            fontSize: '0.9rem',
+                            border: '1px solid #333',
+                            color: isPassed(currentResult, testcase.expected) ? '#eff1f6' : '#ef4743',
+                            lineHeight: '1.5'
+                          }}>{currentResult.stdout}</pre>
+                        </div>
+                      )}
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div style={{ color: '#888', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>Expected</div>
+                        <pre style={{ backgroundColor: '#0f0f0f', padding: '15px', borderRadius: '8px', margin: 0, color: '#eff1f6', fontFamily: 'JetBrains Mono, monospace', border: '1px solid #333', fontSize: '0.9rem' }}>{testcase.expected}</pre>
+                      </div>
+
+                      {currentResult.compile_output && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          <div style={{ color: '#ef4743', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>Compilation Error</div>
+                          <pre style={{ backgroundColor: 'rgba(239, 71, 67, 0.08)', padding: '15px', borderRadius: '8px', margin: 0, color: '#ef4743', fontFamily: 'JetBrains Mono, monospace', whiteSpace: 'pre-wrap', border: '1px solid rgba(239, 71, 67, 0.2)', fontSize: '0.85rem' }}>{currentResult.compile_output}</pre>
+                        </div>
+                      )}
+
+                      {currentResult.stderr && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          <div style={{ color: '#ef4743', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>Stderr</div>
+                          <pre style={{ backgroundColor: 'rgba(239, 71, 67, 0.05)', padding: '15px', borderRadius: '8px', margin: 0, color: '#ef4743', fontFamily: 'JetBrains Mono, monospace', whiteSpace: 'pre-wrap', border: '1px solid rgba(239, 71, 67, 0.15)', fontSize: '0.85rem' }}>{currentResult.stderr}</pre>
+                        </div>
+                      )}
                     </div>
                   </div>
-
-                  {result.status.id === 3 && (
-                    <div style={{ fontSize: '0.9rem', color: '#2cbb5d', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <CheckCircle2 size={16} /> All test cases passed!
-                    </div>
-                  )}
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {result.compile_output && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <div style={{ color: '#ef4743', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>Compilation Error</div>
-                      <pre style={{
-                        backgroundColor: 'rgba(239, 71, 67, 0.08)',
-                        padding: '15px',
-                        borderRadius: '8px',
-                        margin: 0,
-                        color: '#ef4743',
-                        fontFamily: 'JetBrains Mono, monospace',
-                        whiteSpace: 'pre-wrap',
-                        border: '1px solid rgba(239, 71, 67, 0.2)',
-                        fontSize: '0.85rem',
-                        lineHeight: '1.5'
-                      }}>{result.compile_output}</pre>
-                    </div>
-                  )}
-
-                  {result.stdout && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <div style={{ color: '#888', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>Standard Output</div>
-                      <pre style={{
-                        backgroundColor: '#0f0f0f',
-                        padding: '15px',
-                        borderRadius: '8px',
-                        margin: 0,
-                        whiteSpace: 'pre-wrap',
-                        fontFamily: 'JetBrains Mono, monospace',
-                        fontSize: '0.9rem',
-                        border: '1px solid #333',
-                        color: '#eff1f6',
-                        lineHeight: '1.5'
-                      }}>{result.stdout}</pre>
-                    </div>
-                  )}
-
-                  {result.stderr && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <div style={{ color: '#ef4743', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>Standard Error</div>
-                      <pre style={{
-                        backgroundColor: 'rgba(239, 71, 67, 0.05)',
-                        padding: '15px',
-                        borderRadius: '8px',
-                        margin: 0,
-                        color: '#ef4743',
-                        fontFamily: 'JetBrains Mono, monospace',
-                        whiteSpace: 'pre-wrap',
-                        border: '1px solid rgba(239, 71, 67, 0.15)',
-                        fontSize: '0.85rem',
-                        lineHeight: '1.5'
-                      }}>{result.stderr}</pre>
-                    </div>
-                  )}
-
-                  {result.status.id === 4 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      <div style={{ color: '#ef4743', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase' }}>Expected Output</div>
-                      <pre style={{
-                        backgroundColor: 'rgba(239, 71, 67, 0.05)',
-                        padding: '15px',
-                        borderRadius: '8px',
-                        margin: 0,
-                        color: '#eff1f6',
-                        fontFamily: 'JetBrains Mono, monospace',
-                        whiteSpace: 'pre-wrap',
-                        border: '1px solid rgba(239, 71, 67, 0.2)',
-                        fontSize: '0.9rem',
-                        lineHeight: '1.5'
-                      }}>{testcase.expected}</pre>
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
             )}
           </div>
