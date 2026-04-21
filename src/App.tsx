@@ -194,14 +194,6 @@ const App: React.FC = () => {
     runCode(sourceCode, selectedLanguageId, inputs, true);
   }
 
-  const handleSettingsClick = () => {
-    window.location.href = 'settings.html'
-  }
-
-  const handleAppsClick = () => {
-    window.location.href = 'apps.html'
-  }
-
   const handleProblemListClick = () => {
     setIsDrawerOpen(!isDrawerOpen)
   }
@@ -212,8 +204,6 @@ const App: React.FC = () => {
         onRun={handleRun}
         onSubmit={handleSubmit}
         onToggleTheme={toggleTheme}
-        onSettingsClick={handleSettingsClick}
-        onAppsClick={handleAppsClick}
         onProblemListClick={handleProblemListClick}
         isRunning={isRunning}
         theme={theme}
@@ -302,7 +292,7 @@ const App: React.FC = () => {
       )}
 
       {!isMobile && (
-        <div className="procode-showCopyright" style={{ height: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: 'var(--secondary-text)', borderTop: '1px solid var(--border-color)', backgroundColor: 'var(--dark-bg)' }}>
+        <div className="procode-showCopyright" style={{ height: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#666', borderTop: '1px solid var(--border-color)', backgroundColor: 'var(--dark-bg)' }}>
           © 2016-2026 ProCode IDE – All Rights Reserved.
         </div>
       )}

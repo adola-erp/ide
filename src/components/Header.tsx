@@ -1,12 +1,10 @@
 import React from 'react'
-import { Settings, LayoutGrid, Sun, Moon, Flame, Play, CloudUpload, Loader2, Home } from 'lucide-react'
+import { Sun, Moon, Flame, Play, CloudUpload, Loader2, Home, ChevronLeft, ChevronRight, List, Bell, User } from 'lucide-react'
 
 interface HeaderProps {
   onRun: () => void
   onSubmit: () => void
   onToggleTheme: () => void
-  onSettingsClick: () => void
-  onAppsClick: () => void
   onProblemListClick: () => void
   isRunning?: boolean
   theme?: 'dark' | 'light'
@@ -16,68 +14,64 @@ const Header: React.FC<HeaderProps> = ({
   onRun,
   onSubmit,
   onToggleTheme,
-  onSettingsClick,
-  onAppsClick,
   onProblemListClick,
   isRunning = false,
   theme = 'dark'
 }) => {
   return (
-    <header style={{
-      height: '50px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 1rem',
-      borderBottom: '1px solid var(--border-color)',
-      backgroundColor: 'var(--dark-bg)',
-      zIndex: 10
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-        <a href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div className="procode-logo" style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#ffa116' }}>θ</div>
-          <Home size={18} color="var(--secondary-text)" className="desktop-only-inline" />
+    <header className="procode-main-header">
+      <div className="header-left">
+        <div className="logo-box">
+           <span>L</span>
+        </div>
+        <div className="divider desktop-only-flex"></div>
+        <a href="/" className="icon-link desktop-only-flex" title="Home">
+          <Home size={18} />
         </a>
-        <button
-          onClick={onProblemListClick}
-          className="ui basic inverted button"
-          style={{ borderRadius: '20px', padding: '6px 15px', fontSize: '0.85rem' }}
-        >
-          Problem List
+        <button onClick={onProblemListClick} className="problem-list-btn">
+          <List size={16} />
+          <span className="desktop-only-inline">Problem List</span>
         </button>
+        <div className="nav-arrows desktop-only-flex">
+           <button className="arrow-btn"><ChevronLeft size={16} /></button>
+           <button className="arrow-btn"><ChevronRight size={16} /></button>
+        </div>
       </div>
 
-      <div className="desktop-only-flex" style={{ alignItems: 'center', gap: '15px' }}>
+      <div className="header-center desktop-only-flex">
          <button
            onClick={onRun}
            disabled={isRunning}
-           className="ui basic inverted icon button"
-           style={{ color: '#2cbb5d' }}
-           title="Run Code"
+           className="header-run-btn"
          >
-           {isRunning ? <Loader2 size={18} className="animate-spin" /> : <Play size={18} fill="#2cbb5d" />}
+           {isRunning ? <Loader2 size={16} className="animate-spin" /> : <Play size={14} fill="#2cbb5d" color="#2cbb5d" />}
+           <span>Run</span>
          </button>
          <button
            onClick={onSubmit}
            disabled={isRunning}
-           className="ui green button"
-           style={{ borderRadius: '8px', padding: '8px 15px', display: 'flex', alignItems: 'center', gap: '5px' }}
+           className="header-submit-btn"
          >
-           {isRunning ? <Loader2 size={18} className="animate-spin" /> : <CloudUpload size={18} />}
+           {isRunning ? <Loader2 size={16} className="animate-spin" /> : <CloudUpload size={16} />}
            <span>Submit</span>
          </button>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-         <button onClick={onToggleTheme} className="ui basic inverted icon button" title="Toggle Theme" style={{ color: 'var(--text-color)' }}>
+      <div className="header-right">
+         <button onClick={onToggleTheme} className="header-icon-btn" title="Toggle Theme" style={{ color: 'var(--text-color)' }}>
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
          </button>
-         <button onClick={onAppsClick} className="ui basic inverted icon button desktop-only-inline" title="Apps" style={{ color: 'var(--text-color)' }}><LayoutGrid size={18} /></button>
-         <button onClick={onSettingsClick} className="ui basic inverted icon button" title="Settings" style={{ color: 'var(--text-color)' }}><Settings size={18} /></button>
-         <div className="desktop-only-flex" style={{ alignItems: 'center', gap: '5px', color: 'var(--secondary-text)', fontSize: '0.9rem' }}>
-           <Flame size={18} /> <span>0</span>
+         <button className="header-icon-btn desktop-only-flex" title="Notifications">
+            <Bell size={18} />
+         </button>
+         <div className="streak-info desktop-only-flex">
+           <Flame size={18} fill="#ffa116" color="#ffa116" />
+           <span>12</span>
          </div>
-         <a href="/premium.html" className="ui orange button" style={{ borderRadius: '20px', padding: '8px 15px', textDecoration: 'none' }}>Premium</a>
+         <a href="/premium.html" className="header-premium-btn">Premium</a>
+         <div className="header-profile-avatar" onClick={() => window.location.href='/profile.html'}>
+            <User size={18} />
+         </div>
       </div>
     </header>
   )

@@ -30,60 +30,56 @@ function renderHome() {
             <div id="mobile-sidebar" class="mobile-drawer">
                 <div class="drawer-content">
                     <div class="drawer-header-internal">
-                        <span class="nav-brand">θ ProCode</span>
-                        <button id="close-sidebar" class="icon-btn"><i class="x icon"></i></button>
+                        <div class="logo-box"><span>L</span></div>
+                        <button id="close-sidebar" class="header-icon-btn"><i class="x icon"></i></button>
                     </div>
                     <div class="drawer-links">
                         <a href="/" class="active">Explore</a>
-                        <a href="/interview.html">Interview</a>
+                        <a href="/interview.html">Problems</a>
+                        <a href="/companies.html">Contest</a>
+                        <a href="/store.html">Discuss</a>
                         <a href="/store.html">Store</a>
-                        <a href="/premium.html">Premium</a>
                         <div class="drawer-divider"></div>
-                        <a href="/settings.html">Settings</a>
+                        <a href="/premium.html">Premium</a>
                         <a href="/profile.html">Profile</a>
-                        <a href="/apps.html">Apps</a>
                     </div>
                 </div>
             </div>
             <div id="sidebar-overlay" class="drawer-overlay"></div>
 
-            <!-- Redesigned Header -->
-            <nav class="page-nav home-header">
-                <div class="nav-content">
-                    <!-- Left -->
-                    <div class="nav-left">
-                        <button id="open-sidebar" class="icon-btn mobile-only-inline"><i class="bars icon"></i></button>
-                        <a href="/" class="nav-brand">
-                            <span class="logo-symbol">θ</span>
-                            <span class="logo-text desktop-only-inline">ProCode</span>
-                        </a>
-                    </div>
+            <!-- Redesigned Global Header (Desktop & Mobile) -->
+            <header class="procode-main-header home-header">
+                <div class="header-left">
+                    <button id="open-sidebar" class="header-icon-btn mobile-only-inline"><i class="bars icon"></i></button>
+                    <div class="logo-box"><span>L</span></div>
+                    <div class="divider desktop-only-flex"></div>
+                    <a href="/" class="icon-link desktop-only-flex" title="Home"><i class="home icon" style="font-size: 1.1rem;"></i></a>
 
-                    <!-- Center (Desktop) -->
-                    <div class="nav-center desktop-only-flex">
-                        <div class="nav-links-modern">
-                            <a href="/" class="active">Explore</a>
-                            <a href="/interview.html">Problems</a>
-                            <a href="/companies.html">Contest</a>
-                            <a href="/store.html">Discuss</a>
-                            <a href="/store.html">Store</a>
-                        </div>
-                    </div>
-
-                    <!-- Right -->
-                    <div class="nav-right">
-                         <div class="header-actions">
-                            <button class="theme-toggle icon-btn" id="home-theme-toggle">
-                                <i class="sun icon"></i>
-                            </button>
-                            <a href="/premium.html" class="premium-btn desktop-only-inline">Register</a>
-                            <div id="profile-btn" class="profile-avatar" onclick="window.location.href='/profile.html'">
-                                <i class="user icon"></i>
-                            </div>
-                         </div>
+                    <div class="nav-links-modern desktop-only-flex" style="margin-left: 10px;">
+                        <a href="/" class="active">Explore</a>
+                        <a href="/interview.html">Problems</a>
+                        <a href="/companies.html">Contest</a>
+                        <a href="/store.html">Discuss</a>
                     </div>
                 </div>
-            </nav>
+
+                <div class="header-right">
+                     <button class="header-icon-btn" id="home-theme-toggle">
+                        <i class="sun icon"></i>
+                     </button>
+                     <button class="header-icon-btn desktop-only-flex" title="Notifications">
+                        <i class="bell icon"></i>
+                     </button>
+                     <div class="streak-info desktop-only-flex">
+                       <i class="fire icon" style="color: #ffa116; margin: 0;"></i>
+                       <span>12</span>
+                     </div>
+                     <a href="/premium.html" class="header-premium-btn">Premium</a>
+                     <div class="header-profile-avatar" onclick="window.location.href='/profile.html'">
+                        <i class="user icon"></i>
+                     </div>
+                </div>
+            </header>
 
             <div class="page-container">
                 <div class="home-layout">
