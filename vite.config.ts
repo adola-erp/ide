@@ -8,7 +8,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        home: resolve(__dirname, 'home.html'),
+        editor: resolve(__dirname, 'editor.html'),
         settings: resolve(__dirname, 'settings.html'),
         profile: resolve(__dirname, 'profile.html'),
         premium: resolve(__dirname, 'premium.html'),

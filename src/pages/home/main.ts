@@ -6,8 +6,8 @@ if (appElement) {
         <div class="page-wrapper" style="background-color: #0f0f0f;">
             <nav class="page-nav" style="justify-content: space-between;">
                 <div style="display: flex; align-items: center; gap: 2rem;">
-                    <a href="/home.html" class="nav-brand">θ ProCode</a>
-                    <a href="/home.html" style="color: white; font-weight: 600; text-decoration: none; border-bottom: 2px solid white; padding-bottom: 5px;">Problems</a>
+                    <a href="/" class="nav-brand">θ ProCode</a>
+                    <a href="/" style="color: white; font-weight: 600; text-decoration: none; border-bottom: 2px solid white; padding-bottom: 5px;">Problems</a>
                     <a href="#" style="color: var(--secondary-text); text-decoration: none;">Contest</a>
                     <a href="#" style="color: var(--secondary-text); text-decoration: none;">Discuss</a>
                     <a href="#" style="color: var(--secondary-text); text-decoration: none;">Interview</a>
@@ -108,19 +108,19 @@ if (appElement) {
 
                     <!-- Problem Table -->
                     <div class="modern-card" style="padding: 0;">
-                        <div style="padding: 1rem 1.5rem; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); color: #2cbb5d; cursor: pointer;" onclick="window.location.href='/'">
+                        <div style="padding: 1rem 1.5rem; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); color: #2cbb5d; cursor: pointer;" onclick="window.location.href='/editor.html'">
                             <i class="check circle icon"></i>
                             <span style="margin-left: 1rem;">1. Two Sum</span>
                             <span style="margin-left: auto; font-size: 0.85rem; color: #2cbb5d;">Easy</span>
                             <span style="margin-left: 2rem; color: var(--secondary-text);">57.4%</span>
                         </div>
-                        <div style="padding: 1rem 1.5rem; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); color: white; cursor: pointer;" onclick="window.location.href='/'">
+                        <div style="padding: 1rem 1.5rem; display: flex; align-items: center; border-bottom: 1px solid var(--border-color); color: white; cursor: pointer;" onclick="window.location.href='/editor.html'">
                             <i class="circle outline icon" style="color: var(--secondary-text);"></i>
                             <span style="margin-left: 1rem;">2. Add Two Numbers</span>
                             <span style="margin-left: auto; font-size: 0.85rem; color: #ffa116;">Medium</span>
                             <span style="margin-left: 2rem; color: var(--secondary-text);">48.3%</span>
                         </div>
-                        <div style="padding: 1rem 1.5rem; display: flex; align-items: center; color: white; cursor: pointer;" onclick="window.location.href='/'">
+                        <div style="padding: 1rem 1.5rem; display: flex; align-items: center; color: white; cursor: pointer;" onclick="window.location.href='/editor.html'">
                             <i class="circle outline icon" style="color: var(--secondary-text);"></i>
                             <span style="margin-left: 1rem;">1722. Minimize Hamming Distance After Swap Operations</span>
                             <span style="margin-left: auto; font-size: 0.85rem; color: #ffa116;">Medium</span>
