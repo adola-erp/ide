@@ -436,3 +436,110 @@ body {
 /* Scrollbar */
 .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+/* Light Mode Variables */
+:root.light-mode {
+    --dark-bg: #ffffff;
+    --darker-bg: #f7f8fa;
+    --panel-bg: #ffffff;
+    --text-color: #262626;
+    --secondary-text: #5c5c5c;
+    --border-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Home Header Redesign */
+.home-header {
+    height: 52px;
+    background-color: var(--dark-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-symbol {
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.logo-text {
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-left: 5px;
+}
+
+.nav-links-modern {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links-modern a {
+    color: var(--secondary-text);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-links-modern a:hover, .nav-links-modern a.active {
+    color: var(--text-color);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.premium-btn {
+    background-color: rgba(255, 161, 22, 0.1);
+    color: var(--accent-color);
+    padding: 6px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.premium-btn:hover {
+    background-color: rgba(255, 161, 22, 0.2);
+}
+
+/* Fix for light mode buttons in Semantic UI */
+.light-mode .ui.button.inverted {
+    color: #1a1a1a !important;
+    border-color: #ddd !important;
+}
+
+.light-mode .ui.button.inverted:hover {
+    background: #f0f0f0 !important;
+}
+
+/* Editor Workspace Light Mode Fixes */
+.light-mode .ui.secondary.pointing.menu .item {
+    color: var(--secondary-text) !important;
+}
+.light-mode .ui.secondary.pointing.menu .active.item {
+    color: var(--text-color) !important;
+    border-color: var(--text-color) !important;
+}
+.light-mode .problem-description {
+    color: var(--text-color) !important;
+}
+.light-mode .ui.header.inverted {
+    color: var(--text-color) !important;
+}
+.light-mode pre {
+    background-color: #f0f0f0 !important;
+    color: #1a1a1a !important;
+    border: 1px solid #ddd !important;
+}
+.light-mode textarea {
+    background-color: #fff !important;
+    color: #1a1a1a !important;
+    border: 1px solid #ddd !important;
+}
+.light-mode .procode-showCopyright {
+    background-color: #fff !important;
+    border-top: 1px solid #eee !important;
+}

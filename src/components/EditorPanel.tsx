@@ -9,20 +9,21 @@ interface EditorPanelProps {
   onChange: (value: string | undefined) => void
   selectedLanguageId: number
   onLanguageChange: (languageId: number) => void
+  theme?: 'dark' | 'light'
 }
 
-const EditorPanel: React.FC<EditorPanelProps> = ({ code, onChange, selectedLanguageId, onLanguageChange }) => {
+const EditorPanel: React.FC<EditorPanelProps> = ({ code, onChange, selectedLanguageId, onLanguageChange, theme = 'dark' }) => {
   const selectedLanguage = SUPPORTED_LANGUAGES.find(l => l.id === selectedLanguageId) || SUPPORTED_LANGUAGES[0];
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#1e1e1e' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--panel-bg)' }}>
       <div style={{
         height: '40px',
-        backgroundColor: '#1a1a1a',
+        backgroundColor: 'var(--dark-bg)',
         display: 'flex',
         alignItems: 'center',
         padding: '0 10px',
-        borderBottom: '1px solid #222',
+        borderBottom: '1px solid var(--border-color)',
         justifyContent: 'space-between'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -30,7 +31,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({ code, onChange, selectedLangu
               selectedLanguageId={selectedLanguageId}
               onLanguageChange={onLanguageChange}
             />
-            <div style={{ width: '1px', height: '20px', backgroundColor: '#333', margin: '0 5px' }}></div>
+            <div style={{ width: '1px', height: '20px', backgroundColor: 'var(--border-color)', margin: '0 5px' }}></div>
             <button style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem' }}>
                 <Zap size={14} /> Auto
             </button>
@@ -47,7 +48,7 @@ const EditorPanel: React.FC<EditorPanelProps> = ({ code, onChange, selectedLangu
           language={selectedLanguage.monacoMode}
           value={code}
           onChange={onChange}
-          theme="vs-dark"
+          theme={theme === 'dark' ? 'vs-dark' : 'light'}
           options={{
             minimap: { enabled: false },
             fontSize: 14,
@@ -68,8 +69,6 @@ const EditorPanel: React.FC<EditorPanelProps> = ({ code, onChange, selectedLangu
                 verticalScrollbarSize: 10,
                 horizontalScrollbarSize: 10,
                 useShadows: false,
-                verticalHasArrows: false,
-                horizontalHasArrows: false,
             }
           }}
         />

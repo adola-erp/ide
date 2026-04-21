@@ -47,30 +47,39 @@ function renderHome() {
             </div>
             <div id="sidebar-overlay" class="drawer-overlay"></div>
 
-            <!-- Header -->
-            <nav class="page-nav">
+            <!-- Redesigned Header -->
+            <nav class="page-nav home-header">
                 <div class="nav-content">
-                    <!-- Left: Logo (Desktop) / Menu (Mobile) -->
+                    <!-- Left -->
                     <div class="nav-left">
                         <button id="open-sidebar" class="icon-btn mobile-only-inline"><i class="bars icon"></i></button>
-                        <a href="/" class="nav-brand desktop-only-inline">θ ProCode IDE</a>
-                        <div class="nav-links desktop-only-flex">
+                        <a href="/" class="nav-brand">
+                            <span class="logo-symbol">θ</span>
+                            <span class="logo-text desktop-only-inline">ProCode</span>
+                        </a>
+                    </div>
+
+                    <!-- Center (Desktop) -->
+                    <div class="nav-center desktop-only-flex">
+                        <div class="nav-links-modern">
                             <a href="/" class="active">Explore</a>
-                            <a href="/interview.html">Interview</a>
+                            <a href="/interview.html">Problems</a>
+                            <a href="/companies.html">Contest</a>
+                            <a href="/store.html">Discuss</a>
                             <a href="/store.html">Store</a>
                         </div>
                     </div>
 
-                    <!-- Center: Logo (Mobile only) -->
-                    <div class="nav-center mobile-only-flex">
-                         <a href="/" class="nav-brand">θ ProCode</a>
-                    </div>
-
-                    <!-- Right: Profile -->
+                    <!-- Right -->
                     <div class="nav-right">
-                         <a href="/premium.html" class="premium-link desktop-only-inline">Premium</a>
-                         <div id="profile-btn" class="profile-avatar" onclick="window.location.href='/profile.html'">
-                            <i class="user icon"></i>
+                         <div class="header-actions">
+                            <button class="theme-toggle icon-btn" id="home-theme-toggle">
+                                <i class="sun icon"></i>
+                            </button>
+                            <a href="/premium.html" class="premium-btn desktop-only-inline">Register</a>
+                            <div id="profile-btn" class="profile-avatar" onclick="window.location.href='/profile.html'">
+                                <i class="user icon"></i>
+                            </div>
                          </div>
                     </div>
                 </div>
@@ -112,7 +121,7 @@ function renderHome() {
                         </div>
                     </div>
 
-                    <!-- Right Sidebar (Desktop only or stack on mobile) -->
+                    <!-- Right Sidebar -->
                     <div class="side-content">
                         <!-- Calendar Card -->
                         <div class="modern-card calendar-card">
@@ -177,6 +186,25 @@ function renderHome() {
 
     document.getElementById('close-sidebar')?.addEventListener('click', closeSidebar);
     document.getElementById('sidebar-overlay')?.addEventListener('click', closeSidebar);
+
+    // Theme Toggle Logic
+    const toggleTheme = () => {
+        const isLight = document.documentElement.classList.toggle('light-mode');
+        localStorage.setItem('procode-theme', isLight ? 'light' : 'dark');
+        const icon = document.querySelector('#home-theme-toggle i');
+        if (icon) {
+            icon.className = isLight ? 'moon icon' : 'sun icon';
+        }
+    };
+
+    document.getElementById('home-theme-toggle')?.addEventListener('click', toggleTheme);
+
+    // Initialize theme
+    if (localStorage.getItem('procode-theme') === 'light') {
+        document.documentElement.classList.add('light-mode');
+        const icon = document.querySelector('#home-theme-toggle i');
+        if (icon) icon.className = 'moon icon';
+    }
 }
 
 renderHome();

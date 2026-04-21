@@ -31,14 +31,14 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ selectedLanguageId,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          backgroundColor: '#333',
-          color: '#fff',
+          backgroundColor: 'var(--dark-bg)',
+          color: 'var(--text-color)',
           padding: '6px 12px',
           borderRadius: '6px',
           fontSize: '0.85rem',
           cursor: 'pointer',
           minWidth: '200px',
-          border: '1px solid #444',
+          border: '1px solid var(--border-color)',
           transition: 'background 0.2s'
         }}
       >
@@ -55,10 +55,10 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ selectedLanguageId,
             top: 'calc(100% + 4px)',
             left: 0,
             right: 0,
-            backgroundColor: '#2a2a2a',
-            border: '1px solid #444',
+            backgroundColor: 'var(--panel-bg)',
+            border: '1px solid var(--border-color)',
             borderRadius: '8px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
             zIndex: 1000,
             maxHeight: '400px',
             overflowY: 'auto',
@@ -75,8 +75,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ selectedLanguageId,
               style={{
                 padding: '8px 12px',
                 fontSize: '0.85rem',
-                color: lang.id === selectedLanguageId ? '#fff' : '#ccc',
-                backgroundColor: lang.id === selectedLanguageId ? '#1a73e8' : 'transparent',
+                color: lang.id === selectedLanguageId ? '#fff' : 'var(--text-color)',
+                backgroundColor: lang.id === selectedLanguageId ? 'var(--accent-color)' : 'transparent',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -85,14 +85,12 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ selectedLanguageId,
               }}
               onMouseEnter={(e) => {
                 if (lang.id !== selectedLanguageId) {
-                  e.currentTarget.style.backgroundColor = '#3a3a3a'
-                  e.currentTarget.style.color = '#fff'
+                  e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.05)'
                 }
               }}
               onMouseLeave={(e) => {
                 if (lang.id !== selectedLanguageId) {
                   e.currentTarget.style.backgroundColor = 'transparent'
-                  e.currentTarget.style.color = '#ccc'
                 }
               }}
             >

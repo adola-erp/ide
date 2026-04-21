@@ -44,6 +44,7 @@ const App: React.FC = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
   const [customInput, setCustomInput] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [theme, setTheme] = useState<'dark' | 'light'>((localStorage.getItem('procode-theme') as 'dark' | 'light') || 'dark')
 
   const pollingRefs = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
   const abortRef = useRef(false);
@@ -53,12 +54,20 @@ const App: React.FC = () => {
       setIsMobile(window.innerWidth <= 768)
     }
     window.addEventListener('resize', handleResize)
+
+    // Apply theme on load
+    if (theme === 'light') {
+        document.documentElement.classList.add('light-mode');
+    } else {
+        document.documentElement.classList.remove('light-mode');
+    }
+
     return () => {
       window.removeEventListener('resize', handleResize);
       abortRef.current = true;
       Object.values(pollingRefs.current).forEach(clearTimeout);
     }
-  }, [])
+  }, [theme])
 
   useEffect(() => {
     if (currentProblem.testcases[0]) {
@@ -73,6 +82,17 @@ const App: React.FC = () => {
 
   const handleLanguageChange = (id: number) => {
     setSelectedLanguageId(id)
+  }
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('procode-theme', newTheme);
+    if (newTheme === 'light') {
+        document.documentElement.classList.add('light-mode');
+    } else {
+        document.documentElement.classList.remove('light-mode');
+    }
   }
 
   const fetchSubmission = useCallback(async (token: string, caseIdx: number, iteration = 1): Promise<ExecutionResult | null> => {
@@ -174,11 +194,6 @@ const App: React.FC = () => {
     runCode(sourceCode, selectedLanguageId, inputs, true);
   }
 
-  const handleToggleTheme = () => {
-    const themeBtn = document.getElementById('procode-theme-toggle-btn')
-    if (themeBtn) themeBtn.click()
-  }
-
   const handleSettingsClick = () => {
     window.location.href = 'settings.html'
   }
@@ -192,15 +207,16 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="procode-app" style={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#0f0f0f' }}>
+    <div className="procode-app" style={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--darker-bg)', color: 'var(--text-color)' }}>
       <Header
         onRun={handleRun}
         onSubmit={handleSubmit}
-        onToggleTheme={handleToggleTheme}
+        onToggleTheme={toggleTheme}
         onSettingsClick={handleSettingsClick}
         onAppsClick={handleAppsClick}
         onProblemListClick={handleProblemListClick}
         isRunning={isRunning}
+        theme={theme}
       />
 
       <ProblemListDrawer
@@ -221,6 +237,7 @@ const App: React.FC = () => {
                 onChange={(value) => setSourceCode(value || '')}
                 selectedLanguageId={selectedLanguageId}
                 onLanguageChange={handleLanguageChange}
+                theme={theme}
               />
             )}
             {activeTab === 'testcase' && (
@@ -251,6 +268,7 @@ const App: React.FC = () => {
                       onChange={(value) => setSourceCode(value || '')}
                       selectedLanguageId={selectedLanguageId}
                       onLanguageChange={handleLanguageChange}
+                      theme={theme}
                     />
                   </Panel>
 
@@ -284,8 +302,8 @@ const App: React.FC = () => {
       )}
 
       {!isMobile && (
-        <div className="procode-showCopyright" style={{ height: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#666', borderTop: '1px solid #222', backgroundColor: '#1a1a1a' }}>
-          © 2016-2026 ProCode IDE – All Rights Reserved. Empowering developers worldwide.
+        <div className="procode-showCopyright" style={{ height: '25px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#666', borderTop: '1px solid var(--border-color)', backgroundColor: 'var(--dark-bg)' }}>
+          © 2016-2026 ProCode IDE – All Rights Reserved.
         </div>
       )}
     </div>
