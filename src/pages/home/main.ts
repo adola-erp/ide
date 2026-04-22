@@ -43,7 +43,7 @@ function renderHeader() {
 function renderHome() {
     if (!appElement) return;
 
-    const problemsHtml = MOCK_PROBLEMS.slice(0, 20).map(p => {
+    const problemsHtml = MOCK_PROBLEMS.map(p => {
         const diffColor = p.difficulty === 'Easy' ? '#2cbb5d' : p.difficulty === 'Medium' ? '#ffa116' : '#ef4743';
         const diffBg = p.difficulty === 'Easy' ? 'rgba(44, 187, 93, 0.1)' : p.difficulty === 'Medium' ? 'rgba(255, 161, 22, 0.1)' : 'rgba(239, 71, 67, 0.1)';
 
@@ -117,7 +117,7 @@ function renderHome() {
                         <div class="modern-card problem-table-card">
                             ${problemsHtml}
                             <div class="table-footer">
-                                Showing first 20 problems
+                                Showing all 150 problems
                             </div>
                         </div>
                     </div>
