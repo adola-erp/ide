@@ -1,5 +1,5 @@
 import React from 'react'
-import { Settings, LayoutGrid, Sun, Flame, Play, CloudUpload, Loader2 } from 'lucide-react'
+import { Settings, LayoutGrid, Sun, Flame, Play, CloudUpload, Loader2, List } from 'lucide-react'
 
 interface HeaderProps {
   onRun: () => void
@@ -35,27 +35,62 @@ const Header: React.FC<HeaderProps> = ({
         <div className="procode-logo" style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#ffa116' }}>θ</div>
         <button
           onClick={onProblemListClick}
-          className="ui basic inverted button"
-          style={{ borderRadius: '20px', padding: '6px 15px', fontSize: '0.85rem' }}
+          style={{
+            backgroundColor: '#eeeeee',
+            color: '#1a1a1a',
+            borderRadius: '4px',
+            padding: '5px 12px',
+            fontSize: '0.95rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            border: 'none',
+            cursor: 'pointer',
+            fontWeight: '500'
+          }}
         >
-          Problem List
+          <List size={20} />
+          <span>Problem List</span>
         </button>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
          <button
            onClick={onRun}
            disabled={isRunning}
-           className="ui basic inverted icon button"
-           style={{ color: '#2cbb5d' }}
+           style={{
+             backgroundColor: '#eeeeee',
+             color: '#1a1a1a',
+             borderRadius: '4px',
+             padding: '5px 12px',
+             display: 'flex',
+             alignItems: 'center',
+             gap: '6px',
+             border: 'none',
+             cursor: 'pointer',
+             fontWeight: '500',
+             fontSize: '0.95rem'
+           }}
          >
-           {isRunning ? <Loader2 size={18} className="animate-spin" /> : <Play size={18} fill="#2cbb5d" />}
+           {isRunning ? <Loader2 size={18} className="animate-spin" /> : <Play size={18} fill="#2cbb5d" color="#2cbb5d" />}
+           <span>Run</span>
          </button>
          <button
            onClick={onSubmit}
            disabled={isRunning}
-           className="ui green button"
-           style={{ borderRadius: '8px', padding: '8px 15px', display: 'flex', alignItems: 'center', gap: '5px' }}
+           style={{
+             backgroundColor: '#eeeeee',
+             color: '#1a1a1a',
+             borderRadius: '4px',
+             padding: '5px 12px',
+             display: 'flex',
+             alignItems: 'center',
+             gap: '6px',
+             border: 'none',
+             cursor: 'pointer',
+             fontWeight: '500',
+             fontSize: '0.95rem'
+           }}
          >
            {isRunning ? <Loader2 size={18} className="animate-spin" /> : <CloudUpload size={18} />}
            <span>Submit</span>
