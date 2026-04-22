@@ -1,8 +1,8 @@
 :root {
-    /* Professional Dark Theme */
+    /* Professional Dark Theme - High Contrast & Polish */
     --dark-bg: #1a1a1a;
     --darker-bg: #0a0a0a;
-    --panel-bg: #1e1e1e;
+    --panel-bg: #282828;
     --accent-color: #ffa116;
     --accent-hover: #e69114;
     --text-color: #eff1f6;
@@ -10,25 +10,27 @@
     --border-color: rgba(255, 255, 255, 0.08);
     --nav-height: 52px;
     --footer-height: 65px;
-    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --transition-fast: 0.15s ease;
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --transition-fast: 0.2s ease;
 
     /* Semantic Colors */
     --success-color: #2cbb5d;
     --error-color: #ef4743;
     --warning-color: #ffa116;
     --info-color: #3894ff;
+    --difficulty-easy: #00b8a3;
+    --difficulty-medium: #ffc01e;
+    --difficulty-hard: #ff375f;
 }
 
 :root.light-mode {
-    /* Professional Light Theme */
     --dark-bg: #ffffff;
-    --darker-bg: #f8f9fa;
+    --darker-bg: #f5f5f5;
     --panel-bg: #ffffff;
     --text-color: #262626;
-    --secondary-text: #5f6368;
-    --border-color: rgba(0, 0, 0, 0.08);
-    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --secondary-text: #8a8a8a;
+    --border-color: rgba(0, 0, 0, 0.06);
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -41,24 +43,23 @@ body {
     color: var(--text-color) !important;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
-.page-wrapper {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
+/* Scrollbar Style */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(120, 120, 120, 0.3); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(120, 120, 120, 0.5); }
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
 
-/* Header Styles */
+/* Global Header */
 .procode-main-header {
     height: var(--nav-height);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1rem;
+    padding: 0 1.25rem;
     border-bottom: 1px solid var(--border-color);
     background-color: var(--dark-bg);
     position: sticky;
@@ -67,8 +68,8 @@ body {
 }
 
 .logo-box {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     background: linear-gradient(135deg, var(--accent-color) 0%, #ff7e00 100%);
     border-radius: 8px;
     display: flex;
@@ -76,66 +77,8 @@ body {
     justify-content: center;
     color: white;
     font-weight: 800;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     box-shadow: 0 2px 8px rgba(255, 161, 22, 0.3);
-}
-
-.header-left, .header-center, .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.problem-list-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.problem-list-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-/* Header Buttons */
-.header-run-btn, .header-submit-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: all var(--transition-fast);
-}
-
-.header-run-btn {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-color);
-}
-
-.header-run-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.header-submit-btn {
-    background: var(--success-color);
-    color: white;
-}
-
-.header-submit-btn:hover {
-    background: #249a4f;
-    transform: translateY(-1px);
 }
 
 .header-premium-btn {
@@ -152,37 +95,63 @@ body {
 
 .header-premium-btn:hover {
     background: rgba(255, 161, 22, 0.25);
-}
-
-/* Scrollbar Style */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(120, 120, 120, 0.2);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(120, 120, 120, 0.4);
-}
-
-/* Mobile & Responsive Utilities */
-@media (max-width: 768px) {
-    .desktop-only-flex, .desktop-only-inline { display: none !important; }
-    .header-left { gap: 8px; }
-    .logo-box { width: 28px; height: 28px; font-size: 1rem; }
-    .problem-list-btn { padding: 4px 8px; }
+    transform: translateY(-1px);
 }
 
 /* Animations */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
+.fade-in { animation: fadeIn 0.3s ease-out forwards; }
 
-.fade-in {
-    animation: fadeIn 0.2s ease-out forwards;
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
+.animate-spin { animation: spin 1s linear infinite; }
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+    .desktop-only-flex { display: none !important; }
+    .mobile-only-flex { display: flex !important; }
+}
+
+/* Mobile Layout Helpers */
+.mobile-footer {
+    height: var(--footer-height);
+    background: var(--dark-bg);
+    border-top: 1px solid var(--border-color);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+    justify-content: space-around;
+    align-items: center;
+    backdrop-filter: blur(8px);
+}
+
+.mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100%;
+    background: var(--dark-bg);
+    z-index: 2000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 1px solid var(--border-color);
+}
+.mobile-drawer.open { left: 0; }
+
+.drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1999;
+    display: none;
+}
+.drawer-overlay.visible { display: block; }

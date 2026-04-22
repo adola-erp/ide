@@ -47,9 +47,9 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
   const getStatusIcon = (res: ExecutionResult, expected: string) => {
     const color = getStatusColor(res, expected)
     if (res.status.id === 3 && isPassed(res, expected)) {
-        return <CheckCircle2 size={24} color={color} />
+        return <CheckCircle2 size={22} color={color} />
     }
-    return <XCircle size={24} color={color} />
+    return <XCircle size={22} color={color} />
   }
 
   const allPassed = problem.testcases.every((tc, idx) => results[idx] && isPassed(results[idx], tc.expected))
@@ -61,9 +61,9 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
         backgroundColor: 'var(--dark-bg)',
         display: 'flex',
         alignItems: 'center',
-        padding: '0 15px',
+        padding: '0 10px',
         borderBottom: '1px solid var(--border-color)',
-        gap: '20px'
+        gap: '15px'
       }}>
         <button
           onClick={() => setActiveMode('testcase')}
@@ -71,30 +71,33 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
             background: 'none',
             border: 'none',
             height: '100%',
-            padding: '0 5px',
-            fontSize: '0.85rem',
+            padding: '0 8px',
+            fontSize: '0.8rem',
             fontWeight: 600,
             cursor: 'pointer',
             color: activeMode === 'testcase' ? 'var(--text-color)' : 'var(--secondary-text)',
-            borderBottom: activeMode === 'testcase' ? '2px solid var(--text-color)' : '2px solid transparent',
+            borderBottom: activeMode === 'testcase' ? '2px solid var(--accent-color)' : '2px solid transparent',
             transition: 'all 0.2s'
           }}
         >
           Testcase
         </button>
         <button
-          onClick={() => setActiveMode('result')}
+          onClick={() => {
+            if (resultsExist || isRunning) setActiveMode('result');
+          }}
           style={{
             background: 'none',
             border: 'none',
             height: '100%',
-            padding: '0 5px',
-            fontSize: '0.85rem',
+            padding: '0 8px',
+            fontSize: '0.8rem',
             fontWeight: 600,
-            cursor: 'pointer',
+            cursor: isRunning || resultsExist ? 'pointer' : 'default',
             color: activeMode === 'result' ? 'var(--text-color)' : 'var(--secondary-text)',
-            borderBottom: activeMode === 'result' ? '2px solid var(--text-color)' : '2px solid transparent',
+            borderBottom: activeMode === 'result' ? '2px solid var(--accent-color)' : '2px solid transparent',
             transition: 'all 0.2s',
+            opacity: isRunning || resultsExist ? 1 : 0.5,
             display: 'flex',
             alignItems: 'center',
             gap: '6px'
@@ -107,24 +110,24 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
         </button>
       </div>
 
-      <div style={{ flex: 1, padding: '20px', overflowY: 'auto' }} className="custom-scrollbar">
+      <div style={{ flex: 1, padding: '16px', overflowY: 'auto' }} className="custom-scrollbar">
         {activeMode === 'testcase' ? (
           <div className="fade-in">
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
               {problem.testcases.slice(0, 3).map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedTestCase(idx)}
                   style={{
-                    padding: '8px 16px',
-                    borderRadius: '10px',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
                     backgroundColor: selectedTestCase === idx ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.03)',
                     color: selectedTestCase === idx ? 'var(--text-color)' : 'var(--secondary-text)',
                     cursor: 'pointer',
-                    fontSize: '0.85rem',
+                    fontSize: '0.8rem',
                     fontWeight: 600,
-                    transition: 'all 0.2s',
-                    border: selectedTestCase === idx ? '1px solid var(--border-color)' : '1px solid transparent'
+                    transition: 'all 0.2s'
                   }}
                 >
                   Case {idx + 1}
@@ -132,26 +135,25 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
               ))}
             </div>
 
-            <div style={{ marginBottom: '24px' }}>
-              <div style={{ color: 'var(--secondary-text)', marginBottom: '10px', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>Input</div>
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ color: 'var(--secondary-text)', marginBottom: '8px', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Input</div>
               <textarea
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
                 spellCheck={false}
                 style={{
                   width: '100%',
-                  minHeight: '120px',
+                  minHeight: '100px',
                   backgroundColor: 'var(--darker-bg)',
-                  padding: '16px',
-                  borderRadius: '10px',
+                  padding: '12px',
+                  borderRadius: '8px',
                   color: 'var(--text-color)',
                   fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: '0.9rem',
+                  fontSize: '0.85rem',
                   border: '1px solid var(--border-color)',
                   resize: 'vertical',
                   outline: 'none',
-                  lineHeight: '1.6',
-                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
+                  lineHeight: '1.5'
                 }}
               />
             </div>
@@ -159,25 +161,20 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
         ) : (
           <div className="fade-in">
             {isRunning ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '240px', gap: '20px' }}>
-                <div style={{ position: 'relative', width: '56px', height: '56px' }}>
-                  <Loader2 className="animate-spin" size={56} color="var(--success-color)" strokeWidth={1.5} />
-                </div>
-                <div style={{ color: 'var(--secondary-text)', fontSize: '1rem', fontWeight: 500, letterSpacing: '0.5px' }}>
-                    {isSubmitting ? 'Submitting solution...' : 'Running code...'}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '200px', gap: '15px' }}>
+                <Loader2 className="animate-spin" size={40} color="var(--accent-color)" strokeWidth={2} />
+                <div style={{ color: 'var(--secondary-text)', fontSize: '0.9rem', fontWeight: 500 }}>
+                    {isSubmitting ? 'Submitting...' : 'Running...'}
                 </div>
               </div>
             ) : !resultsExist ? (
-              <div style={{ color: 'var(--secondary-text)', textAlign: 'center', marginTop: '80px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-                <div style={{ backgroundColor: 'rgba(255,255,255,0.02)', padding: '24px', borderRadius: '50%' }}>
-                    <Terminal size={48} opacity={0.2} />
-                </div>
-                <div style={{ fontSize: '1rem', fontWeight: 500 }}>Run your code to see the test results.</div>
+              <div style={{ color: 'var(--secondary-text)', textAlign: 'center', marginTop: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
+                <Terminal size={40} opacity={0.2} />
+                <div style={{ fontSize: '0.9rem' }}>Run code to see results.</div>
               </div>
             ) : (
               <div>
-                {/* Summary bar */}
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
                   {problem.testcases.map((tc, idx) => {
                     const res = results[idx];
                     const color = getStatusColor(res, tc.expected);
@@ -187,21 +184,20 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
                         key={idx}
                         onClick={() => setSelectedTestCase(idx)}
                         style={{
-                          padding: '8px 14px',
-                          borderRadius: '10px',
-                          border: 'none',
+                          padding: '6px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border-color)',
                           backgroundColor: selectedTestCase === idx ? 'rgba(255,255,255,0.05)' : 'transparent',
                           color: selectedTestCase === idx ? 'var(--text-color)' : 'var(--secondary-text)',
                           cursor: 'pointer',
-                          fontSize: '0.85rem',
+                          fontSize: '0.8rem',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '10px',
+                          gap: '8px',
                           fontWeight: 600,
-                          transition: 'all 0.2s'
                         }}
                       >
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: color, boxShadow: `0 0 8px ${color}50` }}></div>
+                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: color }}></div>
                         Case {idx + 1}
                       </button>
                     );
@@ -211,85 +207,77 @@ const TestResultsPanel: React.FC<TestResultsPanelProps> = ({
                 {currentResult && (
                   <div className="fade-in">
                     <div style={{
-                      backgroundColor: `${getStatusColor(currentResult, testcase.expected)}08`,
-                      borderRadius: '14px',
-                      padding: '24px',
-                      marginBottom: '28px',
-                      border: `1px solid ${getStatusColor(currentResult, testcase.expected)}20`,
-                      position: 'relative',
-                      overflow: 'hidden'
+                      backgroundColor: `${getStatusColor(currentResult, testcase.expected)}10`,
+                      borderRadius: '10px',
+                      padding: '16px',
+                      marginBottom: '20px',
+                      border: `1px solid ${getStatusColor(currentResult, testcase.expected)}25`
                     }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           {getStatusIcon(currentResult, testcase.expected)}
                           <span style={{
                             color: getStatusColor(currentResult, testcase.expected),
-                            fontWeight: 800,
-                            fontSize: '1.6rem',
-                            letterSpacing: '-0.5px'
+                            fontWeight: 700,
+                            fontSize: '1.2rem',
                           }}>
                             {getStatusLabel(currentResult, testcase.expected)}
                           </span>
                         </div>
-                        <div style={{ display: 'flex', gap: '20px' }}>
-                           {currentResult.time && (
-                             <div style={{ textAlign: 'right' }}>
-                               <div style={{ fontSize: '0.7rem', color: 'var(--secondary-text)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '4px' }}>Runtime</div>
-                               <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-color)' }}>{Math.round(parseFloat(currentResult.time) * 1000)} ms</div>
-                             </div>
-                           )}
-                        </div>
+                        {currentResult.time && (
+                          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--secondary-text)' }}>
+                            {Math.round(parseFloat(currentResult.time) * 1000)} ms
+                          </div>
+                        )}
                       </div>
 
-                      {allPassed && selectedTestCase === 0 && (
-                         <div style={{ color: 'var(--success-color)', fontSize: '0.95rem', fontWeight: 600, marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--success-color)' }}></div>
-                            You passed all test cases!
+                      {allPassed && isSubmitting && selectedTestCase === 0 && (
+                         <div style={{ color: 'var(--success-color)', fontSize: '0.85rem', fontWeight: 600, marginTop: '8px' }}>
+                            All test cases passed!
                          </div>
                       )}
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        <div style={{ color: 'var(--secondary-text)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>Input</div>
-                        <pre style={{ backgroundColor: 'var(--darker-bg)', padding: '16px', borderRadius: '10px', margin: 0, color: 'var(--text-color)', fontFamily: "'JetBrains Mono', monospace", border: '1px solid var(--border-color)', fontSize: '0.9rem', lineHeight: '1.6' }}>{testcase.input}</pre>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ color: 'var(--secondary-text)', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase' }}>Input</div>
+                        <pre style={{ backgroundColor: 'var(--darker-bg)', padding: '12px', borderRadius: '8px', margin: 0, color: 'var(--text-color)', fontFamily: "'JetBrains Mono', monospace", border: '1px solid var(--border-color)', fontSize: '0.85rem', lineHeight: '1.5' }}>{testcase.input}</pre>
                       </div>
 
                       {currentResult.stdout !== undefined && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                          <div style={{ color: 'var(--secondary-text)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>Output</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <div style={{ color: 'var(--secondary-text)', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase' }}>Output</div>
                           <pre style={{
                             backgroundColor: 'var(--darker-bg)',
-                            padding: '16px',
-                            borderRadius: '10px',
+                            padding: '12px',
+                            borderRadius: '8px',
                             margin: 0,
                             whiteSpace: 'pre-wrap',
                             fontFamily: "'JetBrains Mono', monospace",
-                            fontSize: '0.9rem',
+                            fontSize: '0.85rem',
                             border: '1px solid var(--border-color)',
                             color: isPassed(currentResult, testcase.expected) ? 'var(--text-color)' : 'var(--error-color)',
-                            lineHeight: '1.6',
-                            boxShadow: isPassed(currentResult, testcase.expected) ? 'none' : 'inset 0 0 10px rgba(239, 71, 67, 0.05)'
+                            lineHeight: '1.5'
                           }}>{currentResult.stdout || "(no output)"}</pre>
                         </div>
                       )}
 
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        <div style={{ color: 'var(--secondary-text)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>Expected</div>
-                        <pre style={{ backgroundColor: 'var(--darker-bg)', padding: '16px', borderRadius: '10px', margin: 0, color: 'var(--text-color)', fontFamily: "'JetBrains Mono', monospace", border: '1px solid var(--border-color)', fontSize: '0.9rem', lineHeight: '1.6' }}>{testcase.expected}</pre>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ color: 'var(--secondary-text)', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase' }}>Expected</div>
+                        <pre style={{ backgroundColor: 'var(--darker-bg)', padding: '12px', borderRadius: '8px', margin: 0, color: 'var(--text-color)', fontFamily: "'JetBrains Mono', monospace", border: '1px solid var(--border-color)', fontSize: '0.85rem', lineHeight: '1.5' }}>{testcase.expected}</pre>
                       </div>
 
                       {currentResult.compile_output && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                          <div style={{ color: 'var(--error-color)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>Compilation Error</div>
-                          <pre style={{ backgroundColor: 'rgba(239, 71, 67, 0.05)', padding: '18px', borderRadius: '10px', margin: 0, color: 'var(--error-color)', fontFamily: "'JetBrains Mono', monospace", whiteSpace: 'pre-wrap', border: '1px solid rgba(239, 71, 67, 0.15)', fontSize: '0.85rem', lineHeight: '1.6' }}>{currentResult.compile_output}</pre>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <div style={{ color: 'var(--error-color)', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase' }}>Compilation Error</div>
+                          <pre style={{ backgroundColor: 'rgba(239, 71, 67, 0.05)', padding: '12px', borderRadius: '8px', margin: 0, color: 'var(--error-color)', fontFamily: "'JetBrains Mono', monospace", whiteSpace: 'pre-wrap', border: '1px solid rgba(239, 71, 67, 0.15)', fontSize: '0.8rem', lineHeight: '1.5' }}>{currentResult.compile_output}</pre>
                         </div>
                       )}
 
                       {currentResult.stderr && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                          <div style={{ color: 'var(--error-color)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px' }}>Runtime Error (Stderr)</div>
-                          <pre style={{ backgroundColor: 'rgba(239, 71, 67, 0.03)', padding: '18px', borderRadius: '10px', margin: 0, color: 'var(--error-color)', fontFamily: "'JetBrains Mono', monospace", whiteSpace: 'pre-wrap', border: '1px solid rgba(239, 71, 67, 0.1)', fontSize: '0.85rem', lineHeight: '1.6' }}>{currentResult.stderr}</pre>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <div style={{ color: 'var(--error-color)', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase' }}>Runtime Error</div>
+                          <pre style={{ backgroundColor: 'rgba(239, 71, 67, 0.03)', padding: '12px', borderRadius: '8px', margin: 0, color: 'var(--error-color)', fontFamily: "'JetBrains Mono', monospace", whiteSpace: 'pre-wrap', border: '1px solid rgba(239, 71, 67, 0.1)', fontSize: '0.8rem', lineHeight: '1.5' }}>{currentResult.stderr}</pre>
                         </div>
                       )}
                     </div>
