@@ -63,17 +63,23 @@ const App: React.FC = () => {
   const abortRef = useRef(false);
 
   const syncProfile = useCallback(async () => {
-    const supabase = await getClient();
-    if (!supabase || !userId || !user) return;
+    try {
+      const supabase = await getClient();
+      if (!supabase || !userId || !user) return;
 
-    const { data } = await supabase.from('profiles').select('id').eq('id', userId).maybeSingle();
-    if (!data) {
-       await supabase.from('profiles').insert({
-          id: userId,
-          username: user.username || user.emailAddresses[0].emailAddress.split('@')[0],
-          full_name: user.fullName,
-          avatar_url: user.imageUrl
-       });
+      const { data, error } = await supabase.from('profiles').select('id').eq('id', userId).maybeSingle();
+      if (error) console.error('Error checking profile:', error);
+
+      if (!data) {
+         await supabase.from('profiles').insert({
+            id: userId,
+            username: user.username || user.emailAddresses[0].emailAddress.split('@')[0],
+            full_name: user.fullName,
+            avatar_url: user.imageUrl
+         });
+      }
+    } catch (err) {
+      console.error('Failed to sync profile:', err);
     }
   }, [getClient, userId, user]);
 
@@ -143,12 +149,12 @@ const App: React.FC = () => {
   }, []);
 
   const saveSubmissionToSupabase = async (resultsMap: Record<number, ExecutionResult>, code: string) => {
-    const supabase = await getClient();
-    if (!supabase || !userId) return;
-    const mainResult = resultsMap[0];
-    if (!mainResult) return;
-
     try {
+      const supabase = await getClient();
+      if (!supabase || !userId) return;
+      const mainResult = resultsMap[0];
+      if (!mainResult) return;
+
       await supabase.from('submissions').insert({
         user_id: userId,
         problem_id: currentProblem.id,
@@ -199,7 +205,12 @@ const App: React.FC = () => {
   const handleSubmit = () => runCode(sourceCode, selectedLanguageId, currentProblem.testcases.map(tc => tc.input), true);
   const handleProblemListClick = () => setIsDrawerOpen(!isDrawerOpen);
 
-  if (!isLoaded) return <div className="h-screen w-screen bg-[#0b0e14] flex items-center justify-center"><Loader2 className="animate-spin text-[#ff5a00]" size={48} /></div>;
+  if (!isLoaded) return (
+    <div className="h-screen w-screen bg-[#0b0e14] flex items-center justify-center">
+       <Loader2 className="animate-spin text-[#ff5a00]" size={48} />
+    </div>
+  );
+
   if (!isSignedIn) return <Auth />;
 
   return (
