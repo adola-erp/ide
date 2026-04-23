@@ -8,9 +8,6 @@ import {
   Menu,
   Zap,
   Loader2,
-  CheckCircle,
-  Award,
-  Clock,
   LogOut
 } from 'lucide-react';
 import { MOCK_PROBLEMS } from '../../data/mockProblems';

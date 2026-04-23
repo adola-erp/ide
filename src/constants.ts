@@ -1,9 +1,13 @@
+import { ExecutionResult as BaseExecutionResult } from './types';
+
 export interface Language {
   id: number;
   name: string;
   monacoMode: string;
   defaultCode: string;
 }
+
+export type ExecutionResult = BaseExecutionResult;
 
 export const SUPPORTED_LANGUAGES: Language[] = [
   {

@@ -194,7 +194,7 @@ const App: React.FC = () => {
       if (abortRef.current) return;
       const results = await Promise.all(tokens.map((token, idx) => fetchSubmission(token, idx)));
       const resultsMap: Record<number, ExecutionResult> = {};
-      results.forEach((res, idx) => { if (res) resultsMap[idx] = res; });
+      results.forEach((res: ExecutionResult | null, idx: number) => { if (res) resultsMap[idx] = res; });
       setExecutionResults(resultsMap);
       if (results.length > 0) saveSubmissionToSupabase(resultsMap, code);
     } catch (error) {
