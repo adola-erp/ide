@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Trophy,
   ShoppingBag,
@@ -6,31 +6,51 @@ import {
   LayoutGrid,
   Zap,
   Menu,
-  Search,
-  Bell,
   CheckCircle,
   Clock,
   Award,
-  ChevronRight,
-  Settings
+  Loader2,
+  LogOut
 } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import { Session } from '@supabase/supabase-js';
 
 const App = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [submissions, setSubmissions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const stats = [
-    { label: 'Solved', value: '124', icon: CheckCircle, color: 'text-emerald-500' },
-    { label: 'Contests', value: '15', icon: Award, color: 'text-purple-500' },
-    { label: 'Points', value: '2,450', icon: Trophy, color: 'text-amber-500' },
-    { label: 'Rank', value: '12,403', icon: Zap, color: 'text-[#ff5a00]' },
-  ];
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) fetchData(session.user.id);
+      else setLoading(false);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) fetchData(session.user.id);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
-  const recentSubmissions = [
-    { title: 'Two Sum', status: 'Accepted', time: '2 hours ago', difficulty: 'Easy' },
-    { title: 'Add Two Numbers', status: 'Accepted', time: '5 hours ago', difficulty: 'Medium' },
-    { title: 'Longest Substring...', status: 'Wrong Answer', time: '1 day ago', difficulty: 'Medium' },
-    { title: 'Median of Two Arrays', status: 'Accepted', time: '3 days ago', difficulty: 'Hard' },
-  ];
+  const fetchData = async (userId: string) => {
+    setLoading(true);
+    try {
+      const [profRes, subRes] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', userId).single(),
+        supabase.from('submissions').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(10)
+      ]);
+      setProfile(profRes.data);
+      setSubmissions(subRes.data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignOut = () => supabase.auth.signOut().then(() => window.location.href = '/');
 
   const navItems = [
     { id: 'Explore', icon: LayoutGrid, label: 'Explore', link: '/' },
@@ -40,14 +60,22 @@ const App = () => {
     { id: 'Profile', icon: User, label: 'Account', link: '/profile.html' }
   ];
 
+  if (loading) return <div className="h-screen w-screen bg-[#0b0e14] flex items-center justify-center"><Loader2 className="animate-spin text-[#ff5a00]" size={48} /></div>;
+  if (!session) return <div className="h-screen w-screen bg-[#0b0e14] flex flex-col items-center justify-center p-8 text-center"><h2 className="text-2xl font-black text-white mb-4">Please Sign In</h2><button onClick={() => window.location.href='/editor.html'} className="bg-[#ff5a00] text-white px-8 py-3 rounded-2xl font-bold uppercase tracking-widest">Go to Login</button></div>;
+
+  const stats = [
+    { label: 'Solved', value: submissions.filter(s => s.status === 'Accepted').length, icon: CheckCircle, color: 'text-emerald-500' },
+    { label: 'Points', value: profile?.points || 0, icon: Trophy, color: 'text-amber-500' },
+    { label: 'Level', value: profile?.level || 1, icon: Award, color: 'text-purple-500' },
+    { label: 'Title', value: profile?.title || 'Beginner', icon: Zap, color: 'text-[#ff5a00]' },
+  ];
+
   return (
     <div className="flex h-screen bg-[#0b0e14] text-slate-200 font-sans overflow-hidden relative">
       <aside className="hidden md:flex flex-col w-20 lg:w-64 bg-[#0b0e14] border-r border-white/5 z-50">
-        <div className="p-6 mb-4">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.location.href = '/'}>
-            <div className="w-9 h-9 bg-[#ff5a00] rounded-lg flex items-center justify-center font-black text-white shrink-0">P</div>
-            <h1 className="font-bold text-xl text-white hidden lg:block tracking-tight">ProCode</h1>
-          </div>
+        <div className="p-6 mb-4 flex items-center gap-3 cursor-pointer" onClick={() => window.location.href = '/'}>
+          <div className="w-9 h-9 bg-[#ff5a00] rounded-lg flex items-center justify-center font-black text-white">P</div>
+          <h1 className="font-bold text-xl text-white hidden lg:block tracking-tight">ProCode</h1>
         </div>
         <nav className="flex-1 px-3 space-y-2">
           {navItems.map((item) => {
@@ -61,23 +89,20 @@ const App = () => {
           })}
         </nav>
         <div className="p-4 mt-auto">
-           <button onClick={() => window.location.href='/settings.html'} className="w-full flex items-center gap-4 p-3 rounded-2xl text-slate-500 hover:bg-white/5 transition-all">
-              <Settings size={24} /><span className="font-bold text-sm hidden lg:block">Settings</span>
+           <button onClick={handleSignOut} className="w-full flex items-center gap-4 p-3 rounded-2xl text-rose-500 hover:bg-rose-500/10 transition-all font-bold text-sm">
+              <LogOut size={24} /> <span className="hidden lg:block">Sign Out</span>
            </button>
         </div>
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        <div className={`fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] transition-opacity duration-300 md:hidden ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsMenuOpen(false)} />
         <header className="flex-none bg-[#0b0e14] px-4 h-14 flex items-center justify-between z-40 border-b border-white/5">
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsMenuOpen(true)} className="p-1 text-slate-400 hover:text-white transition-colors md:hidden"><Menu size={24} /></button>
-            <div className="hidden md:block text-sm font-bold text-slate-400 uppercase tracking-widest">User Profile</div>
+            <button className="p-1 text-slate-400 hover:text-white transition-colors md:hidden"><Menu size={24} /></button>
+            <div className="hidden md:block text-sm font-bold text-slate-400 uppercase tracking-widest">My Account</div>
           </div>
           <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-400 hover:text-white"><Search size={20} /></button>
-            <button className="p-2 text-slate-400 hover:text-white hidden sm:block"><Bell size={20} /></button>
-            <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-[10px] font-bold text-white">JD</div>
+            <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] font-bold text-white border border-white/10">{profile?.username?.[0]?.toUpperCase() || 'U'}</div>
           </div>
         </header>
 
@@ -85,16 +110,16 @@ const App = () => {
           <div className="max-w-4xl mx-auto px-4">
             <div className="bg-[#1a1d23] border border-white/5 rounded-[2.5rem] p-8 mb-8 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
                <div className="absolute top-0 right-0 p-8 opacity-[0.03] rotate-12"><User size={180} /></div>
-               <div className="w-32 h-32 rounded-full bg-indigo-500 flex items-center justify-center text-4xl font-black text-white z-10">JD</div>
+               <div className="w-32 h-32 rounded-full bg-indigo-500 flex items-center justify-center text-4xl font-black text-white z-10">{profile?.username?.[0]?.toUpperCase() || 'U'}</div>
                <div className="flex-1 text-center md:text-left z-10">
-                  <h2 className="text-3xl font-black text-white mb-1">John Doe</h2>
-                  <p className="text-slate-400 mb-4 flex items-center justify-center md:justify-start gap-2"><Clock size={14} /> Member since July 2026</p>
+                  <h2 className="text-3xl font-black text-white mb-1">{profile?.username || 'User'}</h2>
+                  <p className="text-slate-400 mb-4 flex items-center justify-center md:justify-start gap-2"><Clock size={14} /> Joined {profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : '...'}</p>
                   <div className="flex flex-wrap justify-center md:justify-start gap-4">
-                     <span className="bg-[#ff5a00]/10 text-[#ff5a00] px-4 py-1.5 rounded-full text-xs font-bold">Premium Plus</span>
-                     <span className="bg-slate-800/50 text-slate-400 px-4 py-1.5 rounded-full text-xs font-bold">United States</span>
+                     <span className="bg-[#ff5a00]/10 text-[#ff5a00] px-4 py-1.5 rounded-full text-xs font-bold border border-[#ff5a00]/20">Premium Active</span>
                   </div>
                </div>
             </div>
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                {stats.map((s, i) => (
                   <div key={i} className="bg-[#1a1d23] border border-white/5 p-6 rounded-3xl text-center">
@@ -104,54 +129,41 @@ const App = () => {
                   </div>
                ))}
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-               <div className="md:col-span-2 space-y-8">
-                  <section>
-                     <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Clock size={18} className="text-[#ff5a00]" /> Recent Submissions</h3>
-                     <div className="space-y-3">
-                        {recentSubmissions.map((sub, i) => (
-                           <div key={i} className="bg-[#1a1d23] border border-white/5 p-4 rounded-2xl flex items-center justify-between group">
-                              <div className="flex items-center gap-4">
-                                 <div className={`w-2 h-2 rounded-full ${sub.status === 'Accepted' ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
-                                 <div>
-                                    <div className="text-sm font-bold text-slate-200 group-hover:text-white">{sub.title}</div>
-                                    <div className="text-[10px] text-slate-500">{sub.time} • {sub.difficulty}</div>
-                                 </div>
+               <div className="md:col-span-2">
+                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Clock size={18} className="text-[#ff5a00]" /> Recent Submissions</h3>
+                  <div className="space-y-3">
+                     {submissions.length > 0 ? submissions.map((sub, i) => (
+                        <div key={i} className="bg-[#1a1d23] border border-white/5 p-4 rounded-2xl flex items-center justify-between transition-all">
+                           <div className="flex items-center gap-4">
+                              <div className={`w-2 h-2 rounded-full ${sub.status === 'Accepted' ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                              <div>
+                                 <div className="text-sm font-bold text-slate-200">Problem #{sub.problem_id}</div>
+                                 <div className="text-[10px] text-slate-500 font-medium">{new Date(sub.created_at).toLocaleString()}</div>
                               </div>
-                              <ChevronRight size={16} className="text-slate-700" />
                            </div>
-                        ))}
-                     </div>
-                  </section>
+                           <div className="text-right">
+                              <div className={`text-xs font-bold ${sub.status === 'Accepted' ? 'text-emerald-500' : 'text-rose-500'}`}>{sub.status}</div>
+                              <div className="text-[9px] text-slate-600 font-bold uppercase">{sub.runtime ? `${sub.runtime}ms` : '--'}</div>
+                           </div>
+                        </div>
+                     )) : <div className="text-slate-500 text-sm font-bold p-8 text-center bg-[#1a1d23] rounded-3xl border border-dashed border-white/10">No submissions yet.</div>}
+                  </div>
                </div>
                <div>
-                  <section>
-                     <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Award size={18} className="text-[#ff5a00]" /> Badges</h3>
-                     <div className="bg-[#1a1d23] border border-white/5 p-6 rounded-3xl">
-                        <div className="grid grid-cols-3 gap-4 text-center">
-                           {['🥇', '🚀', '🔥', '🧩', '💎', '🏆'].map((emoji, i) => (
-                              <div key={i} className="text-2xl bg-white/5 p-3 rounded-2xl">{emoji}</div>
-                           ))}
-                        </div>
+                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Award size={18} className="text-[#ff5a00]" /> Badges</h3>
+                  <div className="bg-[#1a1d23] border border-white/5 p-6 rounded-3xl">
+                     <div className="grid grid-cols-3 gap-4 text-center">
+                        {['🥇', '🚀', '🔥'].map((emoji, i) => (
+                           <div key={i} className="text-2xl bg-white/5 p-3 rounded-2xl">{emoji}</div>
+                        ))}
                      </div>
-                  </section>
+                  </div>
                </div>
             </div>
           </div>
         </main>
-        <footer className="fixed bottom-0 left-0 right-0 bg-[#0b0e14]/90 backdrop-blur-2xl border-t border-white/5 px-4 pt-3 pb-8 z-[100] md:hidden">
-          <div className="max-w-lg mx-auto flex justify-between items-center">
-            {navItems.map((item) => {
-               const isActive = item.id === 'Profile';
-               return (
-                <button key={item.id} onClick={() => { if (item.link !== '/profile.html') window.location.href = item.link; }} className={`flex flex-col items-center justify-center w-14 transition-all duration-300 ${isActive ? 'text-[#ff5a00]' : 'text-slate-500'}`}>
-                  <div className={`p-1.5 rounded-xl transition-all duration-300 ${isActive ? 'bg-[#ff5a00]/10 scale-110' : ''}`}><item.icon size={22} strokeWidth={isActive ? 2.5 : 2} /></div>
-                  <span className={`text-[9px] font-bold mt-1.5 tracking-tight ${isActive ? 'opacity-100' : 'opacity-60'}`}>{item.label}</span>
-                </button>
-               );
-            })}
-          </div>
-        </footer>
       </div>
     </div>
   );
