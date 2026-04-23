@@ -6,6 +6,13 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
@@ -23,6 +30,10 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
+            if (id.includes('@clerk')) return 'vendor-clerk';
+            if (id.includes('@supabase')) return 'vendor-supabase';
+            if (id.includes('monaco-editor')) return 'vendor-monaco';
+            if (id.includes('lucide-react')) return 'vendor-lucide';
             return 'vendor';
           }
         },

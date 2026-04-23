@@ -67,9 +67,7 @@ const App: React.FC = () => {
       const supabase = await getClient();
       if (!supabase || !userId || !user) return;
 
-      const { data, error } = await supabase.from('profiles').select('id').eq('id', userId).maybeSingle();
-      if (error) console.error('Error checking profile:', error);
-
+      const { data } = await supabase.from('profiles').select('id').eq('id', userId).maybeSingle();
       if (!data) {
          await supabase.from('profiles').insert({
             id: userId,
@@ -79,7 +77,7 @@ const App: React.FC = () => {
          });
       }
     } catch (err) {
-      console.error('Failed to sync profile:', err);
+      console.error('Profile sync failed:', err);
     }
   }, [getClient, userId, user]);
 
@@ -123,14 +121,15 @@ const App: React.FC = () => {
 
   const fetchSubmission = useCallback(async (token: string, caseIdx: number, iteration = 1): Promise<ExecutionResult | null> => {
     if (abortRef.current) return null;
-    if (iteration >= 100) return { status: { id: 5, description: 'Time Limit Exceeded' }, stderr: 'Timeout' };
+    if (iteration >= 60) return { status: { id: 5, description: 'Time Limit Exceeded' }, stderr: 'Polling timeout' };
 
     try {
       const response = await fetch(`${CE_BASE_URL}/submissions/${token}?base64_encoded=true`);
+      if (!response.ok) throw new Error('Network failure');
       const data = await response.json();
       if (data.status.id <= 2) {
         return new Promise((resolve) => {
-           pollingRefs.current[caseIdx] = setTimeout(() => resolve(fetchSubmission(token, caseIdx, iteration + 1)), 1000);
+           pollingRefs.current[caseIdx] = setTimeout(() => resolve(fetchSubmission(token, caseIdx, iteration + 1)), 1500);
         });
       } else {
         return {
@@ -144,7 +143,7 @@ const App: React.FC = () => {
         };
       }
     } catch (error) {
-      return { status: { id: 13, description: 'Internal Error' }, stderr: 'Network Failure' };
+      return { status: { id: 13, description: 'Internal Error' }, stderr: 'Connection lost' };
     }
   }, []);
 
@@ -153,7 +152,7 @@ const App: React.FC = () => {
       const supabase = await getClient();
       if (!supabase || !userId) return;
       const mainResult = resultsMap[0];
-      if (!mainResult) return;
+      if (!mainResult || mainResult.status.id <= 2) return;
 
       await supabase.from('submissions').insert({
         user_id: userId,
@@ -165,7 +164,7 @@ const App: React.FC = () => {
         memory: mainResult.memory ? parseInt(mainResult.memory.toString()) : null
       });
     } catch (err) {
-      console.error('Failed to persist submission:', err);
+      console.error('Save failed:', err);
     }
   };
 
@@ -177,6 +176,16 @@ const App: React.FC = () => {
     setExecutionResults({});
     if (isMobile) setActiveTab('testcase');
 
+    const runTimeout = setTimeout(() => {
+       setIsRunning(prev => {
+          if (prev) {
+             setExecutionResults({ 0: { status: { id: 13, description: 'Internal Error' }, stderr: 'Global run timeout exceeded.' } });
+             return false;
+          }
+          return prev;
+       });
+    }, 90000);
+
     try {
       const tokens = await Promise.all(inputs.map(async (stdin) => {
         const response = await fetch(`${CE_BASE_URL}/submissions?base64_encoded=true&wait=false`, {
@@ -184,6 +193,7 @@ const App: React.FC = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ source_code: toBase64(code), language_id: languageId, stdin: toBase64(stdin), redirect_stderr_to_stdout: false }),
         });
+        if (!response.ok) throw new Error('Init failed');
         const data = await response.json();
         return data.token;
       }));
@@ -196,6 +206,7 @@ const App: React.FC = () => {
     } catch (error) {
       setExecutionResults({ 0: { status: { id: 13, description: 'Internal Error' }, stderr: 'Failed to initiate execution.' } });
     } finally {
+      clearTimeout(runTimeout);
       setIsRunning(false);
       setIsSubmitting(false);
     }
@@ -205,12 +216,7 @@ const App: React.FC = () => {
   const handleSubmit = () => runCode(sourceCode, selectedLanguageId, currentProblem.testcases.map(tc => tc.input), true);
   const handleProblemListClick = () => setIsDrawerOpen(!isDrawerOpen);
 
-  if (!isLoaded) return (
-    <div className="h-screen w-screen bg-[#0b0e14] flex items-center justify-center">
-       <Loader2 className="animate-spin text-[#ff5a00]" size={48} />
-    </div>
-  );
-
+  if (!isLoaded) return <div className="h-screen w-screen bg-[#0b0e14] flex items-center justify-center"><Loader2 className="animate-spin text-[#ff5a00]" size={48} /></div>;
   if (!isSignedIn) return <Auth />;
 
   return (
